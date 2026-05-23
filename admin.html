@@ -1,0 +1,1617 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="robots" content="noindex, nofollow" />
+  <title>Admin — Emerald Bride</title>
+
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;1,400&family=Lato:wght@300;400;700&display=swap" rel="stylesheet" />
+
+  <style>
+    /* ============================================================
+       CSS CUSTOM PROPERTIES — BRAND TOKENS (mirrored from index.html)
+    ============================================================ */
+    :root {
+      --color-emerald:       #1B4332;
+      --color-emerald-light: #2D6A4F;
+      --color-emerald-faint: rgba(27, 67, 50, 0.06);
+      --color-gold:          #C9A84C;
+      --color-gold-light:    #D4B96A;
+      --color-ivory:         #FAF7F2;
+      --color-off-white:     #FEFEFE;
+      --color-taupe:         #8B7355;
+      --color-charcoal:      #2C2C2C;
+      --color-charcoal-light:#4A4A4A;
+      --color-border:        #E8E0D4;
+      --color-bg:            #F5F3EF;
+      --color-sidebar-bg:    #1B4332;
+
+      --font-heading: 'Cormorant Garamond', Georgia, serif;
+      --font-body:    'Lato', system-ui, sans-serif;
+
+      --sidebar-width: 240px;
+      --transition-base: 0.25s ease;
+
+      --shadow-sm:  0 1px 4px rgba(0,0,0,0.06);
+      --shadow-md:  0 4px 16px rgba(0,0,0,0.1);
+
+      --radius-sm: 4px;
+      --radius-md: 8px;
+    }
+
+    /* ============================================================
+       RESET & BASE
+    ============================================================ */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    html { font-size: 16px; }
+
+    body {
+      font-family: var(--font-body);
+      color: var(--color-charcoal);
+      background: var(--color-bg);
+      line-height: 1.6;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    h1, h2, h3 {
+      font-family: var(--font-heading);
+      font-weight: 400;
+    }
+
+    a { color: inherit; text-decoration: none; }
+    button { font-family: var(--font-body); cursor: pointer; border: none; background: none; }
+    ul { list-style: none; }
+
+    /* ============================================================
+       LOGIN OVERLAY
+    ============================================================ */
+    .login-overlay {
+      position: fixed;
+      inset: 0;
+      z-index: 9999;
+      background: var(--color-emerald);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
+    }
+
+    .login-overlay.hidden { display: none; }
+
+    .login-card {
+      background: var(--color-off-white);
+      border-radius: var(--radius-md);
+      padding: 48px 40px;
+      width: 100%;
+      max-width: 400px;
+      box-shadow: var(--shadow-md);
+      text-align: center;
+    }
+
+    .login-logo {
+      font-family: var(--font-heading);
+      font-size: 2rem;
+      color: var(--color-emerald);
+      display: block;
+      margin-bottom: 6px;
+    }
+
+    .login-subtitle {
+      font-size: 0.78rem;
+      font-weight: 700;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--color-taupe);
+      margin-bottom: 36px;
+    }
+
+    .login-form { display: flex; flex-direction: column; gap: 16px; }
+
+    .login-form label {
+      font-size: 0.72rem;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--color-taupe);
+      display: block;
+      margin-bottom: 6px;
+      text-align: left;
+    }
+
+    .login-form input {
+      width: 100%;
+      font-family: var(--font-body);
+      font-size: 0.97rem;
+      color: var(--color-charcoal);
+      background: var(--color-ivory);
+      border: 1px solid var(--color-border);
+      border-radius: var(--radius-sm);
+      padding: 12px 16px;
+      outline: none;
+      transition: border-color var(--transition-base);
+    }
+
+    .login-form input:focus { border-color: var(--color-emerald); }
+
+    .login-btn {
+      background: var(--color-emerald);
+      color: var(--color-ivory);
+      padding: 13px 24px;
+      border-radius: var(--radius-sm);
+      font-size: 0.82rem;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      transition: background var(--transition-base);
+      width: 100%;
+    }
+
+    .login-btn:hover { background: var(--color-emerald-light); }
+
+    .login-error {
+      font-size: 0.82rem;
+      color: #c0392b;
+      text-align: center;
+      min-height: 20px;
+    }
+
+    /* ============================================================
+       ADMIN LAYOUT
+    ============================================================ */
+    .admin-wrap {
+      display: flex;
+      min-height: 100vh;
+    }
+
+    .admin-wrap.hidden { display: none; }
+
+    /* ---- SIDEBAR ---- */
+    .sidebar {
+      width: var(--sidebar-width);
+      background: var(--color-sidebar-bg);
+      position: fixed;
+      top: 0;
+      left: 0;
+      bottom: 0;
+      display: flex;
+      flex-direction: column;
+      overflow-y: auto;
+      z-index: 100;
+    }
+
+    .sidebar-header {
+      padding: 28px 20px 20px;
+      border-bottom: 1px solid rgba(255,255,255,0.08);
+    }
+
+    .sidebar-logo {
+      font-family: var(--font-heading);
+      font-size: 1.4rem;
+      color: var(--color-ivory);
+      display: block;
+      margin-bottom: 4px;
+    }
+
+    .sidebar-role {
+      font-size: 0.68rem;
+      font-weight: 700;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: rgba(250, 247, 242, 0.4);
+    }
+
+    .sidebar-nav {
+      flex: 1;
+      padding: 16px 0;
+    }
+
+    .sidebar-nav-item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 11px 20px;
+      font-size: 0.82rem;
+      font-weight: 700;
+      letter-spacing: 0.06em;
+      color: rgba(250, 247, 242, 0.65);
+      cursor: pointer;
+      transition: all var(--transition-base);
+      border-left: 3px solid transparent;
+      user-select: none;
+    }
+
+    .sidebar-nav-item:hover {
+      color: var(--color-ivory);
+      background: rgba(255,255,255,0.06);
+    }
+
+    .sidebar-nav-item.active {
+      color: var(--color-ivory);
+      background: rgba(255,255,255,0.1);
+      border-left-color: var(--color-gold);
+    }
+
+    .sidebar-nav-item svg {
+      width: 16px;
+      height: 16px;
+      flex-shrink: 0;
+      stroke: currentColor;
+    }
+
+    .sidebar-footer {
+      padding: 16px 20px;
+      border-top: 1px solid rgba(255,255,255,0.08);
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .sidebar-view-btn {
+      display: block;
+      text-align: center;
+      padding: 10px;
+      background: rgba(201, 168, 76, 0.15);
+      border: 1px solid rgba(201, 168, 76, 0.4);
+      border-radius: var(--radius-sm);
+      font-size: 0.75rem;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--color-gold-light);
+      transition: all var(--transition-base);
+    }
+
+    .sidebar-view-btn:hover {
+      background: rgba(201, 168, 76, 0.25);
+    }
+
+    .sidebar-logout {
+      text-align: center;
+      padding: 8px;
+      font-size: 0.72rem;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: rgba(250,247,242,0.35);
+      transition: color var(--transition-base);
+    }
+
+    .sidebar-logout:hover { color: rgba(250,247,242,0.7); cursor: pointer; }
+
+    /* ---- MAIN CONTENT ---- */
+    .admin-main {
+      margin-left: var(--sidebar-width);
+      flex: 1;
+      min-width: 0;
+      padding: 36px 40px;
+    }
+
+    /* ---- PANELS ---- */
+    .panel { display: none; }
+    .panel.active { display: block; }
+
+    .panel-title {
+      font-family: var(--font-heading);
+      font-size: 2rem;
+      color: var(--color-emerald);
+      margin-bottom: 6px;
+    }
+
+    .panel-desc {
+      font-size: 0.88rem;
+      color: var(--color-taupe);
+      margin-bottom: 32px;
+    }
+
+    /* ---- CARDS ---- */
+    .card {
+      background: var(--color-off-white);
+      border-radius: var(--radius-md);
+      box-shadow: var(--shadow-sm);
+      border: 1px solid var(--color-border);
+      padding: 28px 32px;
+      margin-bottom: 24px;
+    }
+
+    .card-title {
+      font-family: var(--font-heading);
+      font-size: 1.2rem;
+      color: var(--color-emerald);
+      margin-bottom: 20px;
+      padding-bottom: 12px;
+      border-bottom: 1px solid var(--color-border);
+    }
+
+    /* ---- FORM ELEMENTS ---- */
+    .field-group {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      margin-bottom: 18px;
+    }
+
+    .field-group:last-of-type { margin-bottom: 0; }
+
+    .field-label {
+      font-size: 0.72rem;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--color-taupe);
+    }
+
+    .field-input,
+    .field-textarea {
+      font-family: var(--font-body);
+      font-size: 0.93rem;
+      color: var(--color-charcoal);
+      background: var(--color-ivory);
+      border: 1px solid var(--color-border);
+      border-radius: var(--radius-sm);
+      padding: 10px 14px;
+      outline: none;
+      width: 100%;
+      transition: border-color var(--transition-base);
+    }
+
+    .field-input:focus,
+    .field-textarea:focus {
+      border-color: var(--color-emerald);
+      box-shadow: 0 0 0 3px rgba(27, 67, 50, 0.07);
+    }
+
+    .field-textarea {
+      resize: vertical;
+      min-height: 90px;
+    }
+
+    .field-textarea.tall { min-height: 130px; }
+
+    .field-hint {
+      font-size: 0.75rem;
+      color: var(--color-taupe);
+      font-style: italic;
+    }
+
+    .image-preview-wrap {
+      margin-top: 10px;
+    }
+
+    .image-preview {
+      width: 100%;
+      max-width: 320px;
+      height: 180px;
+      border-radius: var(--radius-sm);
+      overflow: hidden;
+      border: 1px solid var(--color-border);
+      background: linear-gradient(135deg, #1B4332, #2D6A4F);
+    }
+
+    .image-preview img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+    }
+
+    /* ---- BUTTONS ---- */
+    .btn-save {
+      background: var(--color-emerald);
+      color: var(--color-ivory);
+      padding: 11px 28px;
+      border-radius: var(--radius-sm);
+      font-size: 0.8rem;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      transition: background var(--transition-base);
+      margin-top: 20px;
+    }
+
+    .btn-save:hover { background: var(--color-emerald-light); }
+
+    .btn-add {
+      background: transparent;
+      color: var(--color-emerald);
+      border: 1px dashed var(--color-emerald);
+      padding: 9px 20px;
+      border-radius: var(--radius-sm);
+      font-size: 0.78rem;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      transition: all var(--transition-base);
+    }
+
+    .btn-add:hover {
+      background: var(--color-emerald-faint);
+    }
+
+    .btn-delete {
+      background: transparent;
+      color: #c0392b;
+      font-size: 0.75rem;
+      font-weight: 700;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      padding: 6px 10px;
+      border-radius: var(--radius-sm);
+      transition: all var(--transition-base);
+    }
+
+    .btn-delete:hover { background: rgba(192, 57, 43, 0.07); }
+
+    /* ---- TOAST ---- */
+    .toast {
+      position: fixed;
+      bottom: 32px;
+      right: 32px;
+      background: var(--color-emerald);
+      color: var(--color-ivory);
+      padding: 14px 24px;
+      border-radius: var(--radius-sm);
+      font-size: 0.85rem;
+      font-weight: 700;
+      letter-spacing: 0.06em;
+      box-shadow: var(--shadow-md);
+      transform: translateY(80px);
+      opacity: 0;
+      transition: all 0.35s ease;
+      z-index: 5000;
+      pointer-events: none;
+    }
+
+    .toast.show {
+      transform: translateY(0);
+      opacity: 1;
+    }
+
+    /* ---- DASHBOARD STATS ---- */
+    .dash-stats {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 20px;
+      margin-bottom: 32px;
+    }
+
+    .dash-stat {
+      background: var(--color-off-white);
+      border: 1px solid var(--color-border);
+      border-top: 3px solid var(--color-emerald);
+      border-radius: var(--radius-md);
+      padding: 24px 20px;
+    }
+
+    .dash-stat-value {
+      font-family: var(--font-heading);
+      font-size: 2.4rem;
+      color: var(--color-emerald);
+      display: block;
+      line-height: 1;
+      margin-bottom: 8px;
+    }
+
+    .dash-stat-label {
+      font-size: 0.72rem;
+      font-weight: 700;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--color-taupe);
+    }
+
+    .dash-quick-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+
+    .dash-action-btn {
+      padding: 10px 20px;
+      background: var(--color-off-white);
+      border: 1px solid var(--color-border);
+      border-radius: var(--radius-sm);
+      font-size: 0.78rem;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--color-emerald);
+      transition: all var(--transition-base);
+    }
+
+    .dash-action-btn:hover {
+      background: var(--color-emerald);
+      color: var(--color-ivory);
+      border-color: var(--color-emerald);
+    }
+
+    /* ---- GALLERY ADMIN ---- */
+    .gallery-admin-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+      gap: 16px;
+      margin-bottom: 20px;
+    }
+
+    .gallery-admin-item {
+      background: var(--color-ivory);
+      border: 1px solid var(--color-border);
+      border-radius: var(--radius-sm);
+      overflow: hidden;
+      cursor: grab;
+    }
+
+    .gallery-admin-item:active { cursor: grabbing; }
+    .gallery-admin-item.drag-over { outline: 2px dashed var(--color-emerald); outline-offset: 2px; }
+
+    .gallery-admin-thumb {
+      width: 100%;
+      height: 140px;
+      background: linear-gradient(135deg, #1B4332, #2D6A4F);
+      overflow: hidden;
+      position: relative;
+    }
+
+    .gallery-admin-thumb img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .drag-handle {
+      position: absolute;
+      top: 8px;
+      left: 8px;
+      width: 26px;
+      height: 26px;
+      background: rgba(0,0,0,0.4);
+      border-radius: 4px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+    }
+
+    .drag-handle svg { width: 14px; height: 14px; }
+
+    .gallery-admin-fields {
+      padding: 12px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .gallery-admin-fields .field-input,
+    .gallery-admin-fields .field-textarea {
+      font-size: 0.82rem;
+      padding: 8px 10px;
+    }
+
+    .gallery-admin-fields .field-textarea { min-height: 56px; }
+
+    .gallery-admin-footer {
+      padding: 0 12px 12px;
+      display: flex;
+      justify-content: flex-end;
+    }
+
+    .gallery-warning {
+      background: rgba(201, 168, 76, 0.12);
+      border: 1px solid rgba(201, 168, 76, 0.4);
+      border-radius: var(--radius-sm);
+      padding: 12px 16px;
+      font-size: 0.82rem;
+      color: var(--color-taupe);
+      margin-bottom: 16px;
+      display: none;
+    }
+
+    /* ---- FAQ / TESTIMONIAL LIST ADMIN ---- */
+    .faq-admin-list,
+    .testimonial-admin-list {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      margin-bottom: 20px;
+    }
+
+    .faq-admin-item {
+      background: var(--color-ivory);
+      border: 1px solid var(--color-border);
+      border-radius: var(--radius-sm);
+      padding: 16px;
+      cursor: grab;
+      display: flex;
+      gap: 12px;
+      align-items: flex-start;
+    }
+
+    .faq-admin-item:active { cursor: grabbing; }
+    .faq-admin-item.drag-over { outline: 2px dashed var(--color-emerald); outline-offset: 2px; }
+
+    .faq-drag-handle {
+      flex-shrink: 0;
+      color: var(--color-border);
+      margin-top: 6px;
+      cursor: grab;
+    }
+
+    .faq-drag-handle svg { width: 16px; height: 16px; }
+
+    .faq-admin-fields {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .faq-admin-actions {
+      flex-shrink: 0;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .testimonial-admin-card {
+      background: var(--color-ivory);
+      border: 1px solid var(--color-border);
+      border-radius: var(--radius-sm);
+      padding: 20px;
+    }
+
+    .testimonial-admin-card .card-title {
+      font-size: 1rem;
+      margin-bottom: 16px;
+    }
+
+    .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+
+    /* ---- STATS GRID (About) ---- */
+    .stats-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
+
+    /* ---- SERVICE CARDS GRID ---- */
+    .services-admin-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
+
+    @media (max-width: 900px) {
+      .services-admin-grid { grid-template-columns: 1fr; }
+      .stats-grid { grid-template-columns: 1fr; }
+      .two-col { grid-template-columns: 1fr; }
+      .dash-stats { grid-template-columns: 1fr 1fr; }
+    }
+
+    @media (max-width: 720px) {
+      .admin-main { margin-left: 0; padding: 20px; }
+      .sidebar {
+        position: relative;
+        width: 100%;
+        height: auto;
+        flex-direction: row;
+        flex-wrap: wrap;
+      }
+      .sidebar-nav { display: flex; flex-wrap: wrap; padding: 8px; }
+      .sidebar-nav-item { border-left: none; border-bottom: 2px solid transparent; padding: 8px 12px; }
+      .sidebar-nav-item.active { border-bottom-color: var(--color-gold); border-left: none; }
+      .admin-wrap { flex-direction: column; }
+      .dash-stats { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ============================================================
+       LOGIN OVERLAY
+  ============================================================ -->
+  <div class="login-overlay" id="login-overlay" role="dialog" aria-modal="true" aria-labelledby="login-title">
+    <div class="login-card">
+      <span class="login-logo" id="login-title">Emerald Bride</span>
+      <p class="login-subtitle">Admin Panel</p>
+
+      <form class="login-form" id="login-form" novalidate>
+        <div>
+          <label for="login-password">Password</label>
+          <input type="password" id="login-password" autocomplete="current-password" placeholder="Enter admin password" required />
+        </div>
+        <button type="submit" class="login-btn">Sign In</button>
+        <p class="login-error" id="login-error" role="alert" aria-live="polite"></p>
+      </form>
+    </div>
+  </div>
+
+  <!-- ============================================================
+       ADMIN SHELL
+  ============================================================ -->
+  <div class="admin-wrap hidden" id="admin-wrap">
+
+    <!-- SIDEBAR -->
+    <aside class="sidebar" role="navigation" aria-label="Admin navigation">
+      <div class="sidebar-header">
+        <span class="sidebar-logo">Emerald Bride</span>
+        <span class="sidebar-role">Admin Panel</span>
+      </div>
+
+      <nav class="sidebar-nav" id="sidebar-nav">
+        <div class="sidebar-nav-item active" data-panel="dashboard">
+          <svg viewBox="0 0 24 24" fill="none" stroke-width="1.5" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M3.75 6A2.25 2.25 0 016 3.75h2.25A2.25 2.25 0 0110.5 6v2.25a2.25 2.25 0 01-2.25 2.25H6a2.25 2.25 0 01-2.25-2.25V6zM3.75 15.75A2.25 2.25 0 016 13.5h2.25a2.25 2.25 0 012.25 2.25V18a2.25 2.25 0 01-2.25 2.25H6A2.25 2.25 0 013.75 18v-2.25zM13.5 6a2.25 2.25 0 012.25-2.25H18A2.25 2.25 0 0120.25 6v2.25A2.25 2.25 0 0118 10.5h-2.25a2.25 2.25 0 01-2.25-2.25V6zM13.5 15.75a2.25 2.25 0 012.25-2.25H18a2.25 2.25 0 012.25 2.25V18A2.25 2.25 0 0118 20.25h-2.25A2.25 2.25 0 0113.5 18v-2.25z" /></svg>
+          Dashboard
+        </div>
+        <div class="sidebar-nav-item" data-panel="hero">
+          <svg viewBox="0 0 24 24" fill="none" stroke-width="1.5" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M2.25 15.75l5.159-5.159a2.25 2.25 0 013.182 0l5.159 5.159m-1.5-1.5l1.409-1.409a2.25 2.25 0 013.182 0l2.909 2.909m-18 3.75h16.5a1.5 1.5 0 001.5-1.5V6a1.5 1.5 0 00-1.5-1.5H3.75A1.5 1.5 0 002.25 6v12a1.5 1.5 0 001.5 1.5zm10.5-11.25h.008v.008h-.008V8.25zm.375 0a.375.375 0 11-.75 0 .375.375 0 01.75 0z" /></svg>
+          Hero
+        </div>
+        <div class="sidebar-nav-item" data-panel="about">
+          <svg viewBox="0 0 24 24" fill="none" stroke-width="1.5" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.501 20.118a7.5 7.5 0 0114.998 0A17.933 17.933 0 0112 21.75c-2.676 0-5.216-.584-7.499-1.632z" /></svg>
+          About
+        </div>
+        <div class="sidebar-nav-item" data-panel="services">
+          <svg viewBox="0 0 24 24" fill="none" stroke-width="1.5" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M9.813 15.904L9 18.75l-.813-2.846a4.5 4.5 0 00-3.09-3.09L2.25 12l2.846-.813a4.5 4.5 0 003.09-3.09L9 5.25l.813 2.846a4.5 4.5 0 003.09 3.09L15.75 12l-2.846.813a4.5 4.5 0 00-3.09 3.09z" /></svg>
+          Services
+        </div>
+        <div class="sidebar-nav-item" data-panel="gallery">
+          <svg viewBox="0 0 24 24" fill="none" stroke-width="1.5" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M2.25 15.75l5.159-5.159a2.25 2.25 0 013.182 0l5.159 5.159m-1.5-1.5l1.409-1.409a2.25 2.25 0 013.182 0l2.909 2.909m-18 3.75h16.5a1.5 1.5 0 001.5-1.5V6a1.5 1.5 0 00-1.5-1.5H3.75A1.5 1.5 0 002.25 6v12a1.5 1.5 0 001.5 1.5zm10.5-11.25h.008v.008h-.008V8.25zm.375 0a.375.375 0 11-.75 0 .375.375 0 01.75 0z" /></svg>
+          Gallery
+        </div>
+        <div class="sidebar-nav-item" data-panel="faq">
+          <svg viewBox="0 0 24 24" fill="none" stroke-width="1.5" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M9.879 7.519c1.171-1.025 3.071-1.025 4.242 0 1.172 1.025 1.172 2.687 0 3.712-.203.179-.43.326-.67.442-.745.361-1.45.999-1.45 1.827v.75M21 12a9 9 0 11-18 0 9 9 0 0118 0zm-9 5.25h.008v.008H12v-.008z" /></svg>
+          FAQ
+        </div>
+        <div class="sidebar-nav-item" data-panel="testimonials">
+          <svg viewBox="0 0 24 24" fill="none" stroke-width="1.5" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M7.5 8.25h9m-9 3H12m-9.75 1.51c0 1.6 1.123 2.994 2.707 3.227 1.129.166 2.27.293 3.423.379.35.026.67.21.865.501L12 21l2.755-4.133a1.14 1.14 0 01.865-.501 48.172 48.172 0 003.423-.379c1.584-.233 2.707-1.626 2.707-3.228V6.741c0-1.602-1.123-2.995-2.707-3.228A48.394 48.394 0 0012 3c-2.392 0-4.744.175-7.043.513C3.373 3.746 2.25 5.14 2.25 6.741v6.018z" /></svg>
+          Testimonials
+        </div>
+        <div class="sidebar-nav-item" data-panel="contact">
+          <svg viewBox="0 0 24 24" fill="none" stroke-width="1.5" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M21.75 6.75v10.5a2.25 2.25 0 01-2.25 2.25h-15a2.25 2.25 0 01-2.25-2.25V6.75m19.5 0A2.25 2.25 0 0019.5 4.5h-15a2.25 2.25 0 00-2.25 2.25m19.5 0v.243a2.25 2.25 0 01-1.07 1.916l-7.5 4.615a2.25 2.25 0 01-2.36 0L3.32 8.91a2.25 2.25 0 01-1.07-1.916V6.75" /></svg>
+          Contact Info
+        </div>
+      </nav>
+
+      <div class="sidebar-footer">
+        <a href="index.html" class="sidebar-view-btn" target="_blank" rel="noopener">↗ View Live Site</a>
+        <button class="sidebar-logout" id="logout-btn">Sign Out</button>
+      </div>
+    </aside>
+
+    <!-- MAIN -->
+    <main class="admin-main" id="admin-main">
+
+      <!-- ===================== DASHBOARD ===================== -->
+      <section class="panel active" id="panel-dashboard">
+        <h1 class="panel-title">Welcome back, Emerald Bride.</h1>
+        <p class="panel-desc">Manage your site content from the sections below.</p>
+
+        <div class="dash-stats" id="dash-stats">
+          <div class="dash-stat">
+            <span class="dash-stat-value" id="stat-gallery-count">—</span>
+            <span class="dash-stat-label">Gallery Images</span>
+          </div>
+          <div class="dash-stat">
+            <span class="dash-stat-value" id="stat-faq-count">—</span>
+            <span class="dash-stat-label">FAQ Items</span>
+          </div>
+          <div class="dash-stat">
+            <span class="dash-stat-value" id="stat-last-edited">—</span>
+            <span class="dash-stat-label">Last Saved</span>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-title">Quick Actions</div>
+          <div class="dash-quick-actions">
+            <button class="dash-action-btn" data-goto="hero">Edit Hero</button>
+            <button class="dash-action-btn" data-goto="about">Edit About</button>
+            <button class="dash-action-btn" data-goto="gallery">Manage Gallery</button>
+            <button class="dash-action-btn" data-goto="faq">Edit FAQs</button>
+            <button class="dash-action-btn" data-goto="testimonials">Edit Testimonials</button>
+            <button class="dash-action-btn" data-goto="contact">Edit Contact Info</button>
+          </div>
+        </div>
+      </section>
+
+      <!-- ===================== HERO ===================== -->
+      <section class="panel" id="panel-hero">
+        <h1 class="panel-title">Hero Section</h1>
+        <p class="panel-desc">Edit the text and image shown in the full-screen hero.</p>
+
+        <div class="card">
+          <div class="card-title">Hero Content</div>
+
+          <div class="field-group">
+            <label class="field-label" for="h-eyebrow">Eyebrow Text</label>
+            <input class="field-input" type="text" id="h-eyebrow" placeholder="e.g. Las Vegas Bridal Makeup Artist" />
+          </div>
+
+          <div class="field-group">
+            <label class="field-label" for="h-heading">Heading (H1)</label>
+            <input class="field-input" type="text" id="h-heading" placeholder="Your Wedding Day Begins Here" />
+          </div>
+
+          <div class="field-group">
+            <label class="field-label" for="h-subheading">Subheading</label>
+            <textarea class="field-textarea" id="h-subheading"></textarea>
+          </div>
+
+          <div class="field-group">
+            <label class="field-label" for="h-image">Hero Image URL</label>
+            <input class="field-input" type="url" id="h-image" placeholder="https://..." />
+            <span class="field-hint">Paste a direct image URL. Recommended size: 1920×1080px or larger.</span>
+            <div class="image-preview-wrap">
+              <div class="image-preview" id="h-image-preview">
+                <img id="h-image-preview-img" src="" alt="Hero image preview" loading="lazy" style="display:none;" />
+              </div>
+            </div>
+          </div>
+
+          <button class="btn-save" data-save="hero">Save Hero</button>
+        </div>
+      </section>
+
+      <!-- ===================== ABOUT ===================== -->
+      <section class="panel" id="panel-about">
+        <h1 class="panel-title">About Section</h1>
+        <p class="panel-desc">Edit your bio, stats, and artist photo.</p>
+
+        <div class="card">
+          <div class="card-title">Bio Text</div>
+
+          <div class="field-group">
+            <label class="field-label" for="a-heading">Section Heading</label>
+            <input class="field-input" type="text" id="a-heading" />
+          </div>
+          <div class="field-group">
+            <label class="field-label" for="a-p1">Paragraph 1</label>
+            <textarea class="field-textarea tall" id="a-p1"></textarea>
+          </div>
+          <div class="field-group">
+            <label class="field-label" for="a-p2">Paragraph 2</label>
+            <textarea class="field-textarea tall" id="a-p2"></textarea>
+          </div>
+          <div class="field-group">
+            <label class="field-label" for="a-p3">Paragraph 3</label>
+            <textarea class="field-textarea tall" id="a-p3"></textarea>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-title">Stats Bar</div>
+          <div class="stats-grid">
+            <div>
+              <div class="field-group">
+                <label class="field-label" for="a-s1v">Stat 1 — Value</label>
+                <input class="field-input" type="text" id="a-s1v" placeholder="200+" />
+              </div>
+              <div class="field-group">
+                <label class="field-label" for="a-s1l">Stat 1 — Label</label>
+                <input class="field-input" type="text" id="a-s1l" placeholder="Brides" />
+              </div>
+            </div>
+            <div>
+              <div class="field-group">
+                <label class="field-label" for="a-s2v">Stat 2 — Value</label>
+                <input class="field-input" type="text" id="a-s2v" placeholder="10" />
+              </div>
+              <div class="field-group">
+                <label class="field-label" for="a-s2l">Stat 2 — Label</label>
+                <input class="field-input" type="text" id="a-s2l" placeholder="Years Experience" />
+              </div>
+            </div>
+            <div>
+              <div class="field-group">
+                <label class="field-label" for="a-s3v">Stat 3 — Value</label>
+                <input class="field-input" type="text" id="a-s3v" placeholder="✈" />
+              </div>
+              <div class="field-group">
+                <label class="field-label" for="a-s3l">Stat 3 — Label</label>
+                <input class="field-input" type="text" id="a-s3l" placeholder="Destination Ready" />
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-title">Artist Photo</div>
+          <div class="field-group">
+            <label class="field-label" for="a-image">Image URL</label>
+            <input class="field-input" type="url" id="a-image" placeholder="https://..." />
+            <span class="field-hint">Portrait orientation recommended — approx 600×800px.</span>
+            <div class="image-preview-wrap">
+              <div class="image-preview" id="a-image-preview" style="max-width:200px; height:260px;">
+                <img id="a-image-preview-img" src="" alt="About image preview" loading="lazy" style="display:none;" />
+              </div>
+            </div>
+          </div>
+          <button class="btn-save" data-save="about">Save About</button>
+        </div>
+      </section>
+
+      <!-- ===================== SERVICES ===================== -->
+      <section class="panel" id="panel-services">
+        <h1 class="panel-title">Services</h1>
+        <p class="panel-desc">Edit the title and description for each service card.</p>
+
+        <div class="card">
+          <div class="card-title">Service Cards</div>
+          <div class="services-admin-grid" id="services-admin-grid">
+            <!-- Rendered by JS -->
+          </div>
+          <button class="btn-save" data-save="services">Save Services</button>
+        </div>
+      </section>
+
+      <!-- ===================== GALLERY ===================== -->
+      <section class="panel" id="panel-gallery">
+        <h1 class="panel-title">Gallery</h1>
+        <p class="panel-desc">Add, edit, reorder (drag), or remove gallery images.</p>
+
+        <!-- TODO: Replace image URL input with S3 presigned upload when backend is ready -->
+        <!-- Suggested flow: POST /api/gallery/presign → upload to S3 → save returned CloudFront URL -->
+
+        <div class="gallery-warning" id="gallery-warning">
+          You have 20+ gallery images. Consider archiving older images to keep the gallery curated and fast.
+        </div>
+
+        <div class="card">
+          <div class="card-title">Gallery Images</div>
+          <div class="gallery-admin-grid" id="gallery-admin-grid">
+            <!-- Rendered by JS -->
+          </div>
+          <button class="btn-add" id="gallery-add-btn">+ Add Image</button>
+          <button class="btn-save" data-save="gallery" style="margin-left: 12px;">Save Gallery</button>
+        </div>
+      </section>
+
+      <!-- ===================== FAQ ===================== -->
+      <section class="panel" id="panel-faq">
+        <h1 class="panel-title">FAQ</h1>
+        <p class="panel-desc">Add, edit, reorder (drag), or delete FAQ items.</p>
+
+        <div class="card">
+          <div class="card-title">FAQ Items</div>
+          <div class="faq-admin-list" id="faq-admin-list">
+            <!-- Rendered by JS -->
+          </div>
+          <button class="btn-add" id="faq-add-btn">+ Add Question</button>
+          <button class="btn-save" data-save="faqs" style="margin-left: 12px;">Save FAQ</button>
+        </div>
+      </section>
+
+      <!-- ===================== TESTIMONIALS ===================== -->
+      <section class="panel" id="panel-testimonials">
+        <h1 class="panel-title">Testimonials</h1>
+        <p class="panel-desc">Edit the three featured client testimonials.</p>
+
+        <div class="testimonial-admin-list" id="testimonial-admin-list">
+          <!-- Rendered by JS -->
+        </div>
+
+        <button class="btn-save" data-save="testimonials">Save Testimonials</button>
+      </section>
+
+      <!-- ===================== CONTACT INFO ===================== -->
+      <section class="panel" id="panel-contact">
+        <h1 class="panel-title">Contact Info</h1>
+        <p class="panel-desc">Edit the contact details displayed on the public site.</p>
+
+        <div class="card">
+          <div class="card-title">Contact Details</div>
+
+          <div class="two-col">
+            <div class="field-group">
+              <label class="field-label" for="ci-email">Email Address</label>
+              <input class="field-input" type="email" id="ci-email" />
+            </div>
+            <div class="field-group">
+              <label class="field-label" for="ci-instagram">Instagram Handle</label>
+              <input class="field-input" type="text" id="ci-instagram" placeholder="@emeraldbride" />
+            </div>
+          </div>
+
+          <div class="two-col">
+            <div class="field-group">
+              <label class="field-label" for="ci-location">Location Text</label>
+              <input class="field-input" type="text" id="ci-location" placeholder="Las Vegas, Nevada · Destination Available" />
+            </div>
+            <div class="field-group">
+              <label class="field-label" for="ci-tagline">Tagline</label>
+              <input class="field-input" type="text" id="ci-tagline" placeholder="Based in Las Vegas · Available Worldwide" />
+            </div>
+          </div>
+
+          <div class="field-group">
+            <label class="field-label" for="ci-response-note">Response Time Note</label>
+            <textarea class="field-textarea" id="ci-response-note"></textarea>
+          </div>
+
+          <button class="btn-save" data-save="contact">Save Contact Info</button>
+        </div>
+      </section>
+
+    </main>
+  </div>
+
+  <!-- TOAST -->
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+  <script>
+    // DATA LAYER — replace localStorage calls here with API calls when backend is ready
+    // Suggested future endpoints:
+    //   GET  /api/content/:section
+    //   POST /api/content/:section
+    //   POST /api/admin/login
+    //   POST /api/gallery/upload (replace S3 presigned URL flow)
+
+    // ============================================================
+    // AUTH
+    // TODO: Replace with POST /api/admin/login when backend is ready
+    // ============================================================
+    const ADMIN_PASSWORD = 'emerald2025';
+
+    const loginOverlay = document.getElementById('login-overlay');
+    const adminWrap    = document.getElementById('admin-wrap');
+    const loginForm    = document.getElementById('login-form');
+    const loginError   = document.getElementById('login-error');
+    const logoutBtn    = document.getElementById('logout-btn');
+
+    function checkAuth() {
+      if (sessionStorage.getItem('eb_admin') === '1') {
+        loginOverlay.classList.add('hidden');
+        adminWrap.classList.remove('hidden');
+        initAdmin();
+      }
+    }
+
+    loginForm.addEventListener('submit', e => {
+      e.preventDefault();
+      const pw = document.getElementById('login-password').value;
+      if (pw === ADMIN_PASSWORD) {
+        sessionStorage.setItem('eb_admin', '1');
+        loginError.textContent = '';
+        loginOverlay.classList.add('hidden');
+        adminWrap.classList.remove('hidden');
+        initAdmin();
+      } else {
+        loginError.textContent = 'Incorrect password. Please try again.';
+        document.getElementById('login-password').value = '';
+        document.getElementById('login-password').focus();
+      }
+    });
+
+    logoutBtn.addEventListener('click', () => {
+      sessionStorage.removeItem('eb_admin');
+      adminWrap.classList.add('hidden');
+      loginOverlay.classList.remove('hidden');
+      document.getElementById('login-password').value = '';
+    });
+
+    // ============================================================
+    // DATA LAYER HELPERS
+    // ============================================================
+    const DEFAULTS = {
+      hero: {
+        eyebrow: 'Las Vegas Bridal Makeup Artist',
+        heading: 'Your Wedding Day Begins Here',
+        subheading: 'Effortless, editorial bridal beauty crafted for the woman who wants to feel completely herself — only more luminous, more confident, and entirely unforgettable.',
+        imageUrl: ''
+      },
+      about: {
+        heading: 'Meet the Artist',
+        p1: 'With over a decade of experience in luxury bridal beauty, I\'ve had the privilege of preparing hundreds of brides for the most photographed moment of their lives. My approach blends timeless technique with modern artistry — creating looks that are polished, intentional, and built to last from the first dance to the final goodbye.',
+        p2: 'I specialize in bridal makeup that enhances rather than transforms — because the goal is always for you to look like the most radiant version of yourself. Whether your vision is soft and romantic, bold and editorial, or somewhere beautifully in between, I\'ll craft a look tailored entirely to you.',
+        p3: 'Based in Las Vegas and available for destination weddings worldwide, I bring a full professional kit, a calm presence, and years of on-location experience to every booking — from intimate elopements to grand ballroom affairs.',
+        stat1Value: '200+', stat1Label: 'Brides',
+        stat2Value: '10',   stat2Label: 'Years Experience',
+        stat3Value: '✈',    stat3Label: 'Destination Ready',
+        imageUrl: ''
+      },
+      services: [
+        { title: 'Bridal Glam',    desc: 'Your complete wedding-day makeup experience — a full artistry application designed for longevity, photography, and the quiet confidence of knowing you look exactly right. Includes a pre-service consultation and touch-up kit.' },
+        { title: 'Bridal Party',   desc: 'Cohesive, complementary looks for your bridesmaids, mother of the bride, or any member of your party. Each application is customized to the individual while maintaining a harmonious aesthetic throughout the morning.' },
+        { title: 'Trial Session',  desc: 'A dedicated session to preview and perfect your wedding-day look before the big day — testing products for longevity on your skin, refining details, and ensuring you feel completely confident and ready.' }
+      ],
+      gallery: [
+        { url: '', caption: 'Soft bridal glam — Garden ceremony',       alt: 'Bridal makeup look — soft glam for garden ceremony' },
+        { url: '', caption: 'Timeless elegance — Ballroom wedding',      alt: 'Timeless bridal makeup for ballroom wedding' },
+        { url: '', caption: 'Golden hour bride',                         alt: 'Bridal makeup photographed in golden hour light' },
+        { url: '', caption: 'Editorial bridal — Las Vegas',              alt: 'Editorial bridal makeup look in Las Vegas' },
+        { url: '', caption: 'Bridal party — Spring wedding',             alt: 'Bridal party makeup for spring wedding' },
+        { url: '', caption: 'Natural glow — Outdoor ceremony',           alt: 'Natural glow bridal makeup for outdoor ceremony' },
+        { url: '', caption: 'Romantic smoky eye — Evening reception',    alt: 'Romantic smoky eye bridal makeup for evening reception' },
+        { url: '', caption: 'Classic red lip — City hall wedding',       alt: 'Classic red lip bridal makeup look' },
+        { url: '', caption: 'Desert destination — Arizona',             alt: 'Bridal makeup for desert destination wedding in Arizona' }
+      ],
+      faqs: [
+        { q: 'Do you travel for destination weddings?',       a: 'Absolutely. I\'m based in Las Vegas and available for destination weddings nationwide and internationally. Travel fees apply and are quoted per event.' },
+        { q: 'How far in advance should I book?',             a: 'For peak wedding season (April–October), I recommend booking 9–12 months in advance. Off-season dates may be available with shorter notice, but early booking ensures your date is secured.' },
+        { q: 'Is a trial session required?',                  a: 'A trial is not required but is strongly encouraged. It\'s the best way to perfect your look before the big day, giving us time to refine details, test longevity, and ensure you feel confident.' },
+        { q: 'How long does bridal makeup take on the wedding day?', a: 'Bridal application takes approximately 75–90 minutes. Bridesmaids and additional party members take 45–60 minutes each. I\'ll provide a detailed timeline once your party size is confirmed.' },
+        { q: 'What products do you use?',                     a: 'I work with professional-grade, long-wear brands including Charlotte Tilbury, NARS, Hourglass, Laura Mercier, and MAC — selected for their performance, longevity, and how beautifully they photograph.' },
+        { q: 'Do you accommodate all skin tones and types?',  a: 'Yes, always. My kit includes an extensive shade range to complement every complexion. I\'m also experienced working with sensitive skin, rosacea, mature skin, and other skin concerns.' },
+        { q: 'What is your cancellation policy?',             a: 'A non-refundable retainer of 30% is required to hold your date. Cancellations made within 60 days of the event may forfeit the full booking amount. Full details are outlined in the service agreement.' },
+        { q: 'Do you offer airbrush makeup?',                a: 'Yes. Airbrush application is available and is particularly popular for its flawless, camera-ready finish and exceptional longevity. It can be requested when booking or discussed at your trial.' }
+      ],
+      testimonials: [
+        { quote: 'Working with Emerald Bride was, without question, the best decision I made for my wedding day. I\'ve never felt more like myself — more luminous, more confident. Every photo I look at still takes my breath away.', name: 'Sophia R.', date: 'October Wedding' },
+        { quote: 'From the trial to the wedding morning, the experience was seamless and genuinely joyful. She understood my vision instantly and elevated it in ways I couldn\'t have imagined. My bridal party still talks about how perfect the morning felt.', name: 'Camille T.', date: 'June Wedding' },
+        { quote: 'I have sensitive skin and was nervous about heavy makeup — she made every product choice with such care and intention. My look lasted from 8am through midnight and I felt beautiful every single moment. Worth every penny.', name: 'Natalia V.', date: 'March Wedding' }
+      ],
+      contact: {
+        email: 'hello@emeraldbride.com',
+        instagram: '@emeraldbride',
+        location: 'Las Vegas, Nevada · Destination Available',
+        responseNote: 'I respond to all inquiries within 24–48 hours. For urgent requests or same-week bookings, feel free to reach out directly via Instagram.',
+        tagline: 'Based in Las Vegas · Available Worldwide'
+      }
+    };
+
+    function getData(key, fallback) {
+      try {
+        const raw = localStorage.getItem('eb_' + key);
+        return raw ? JSON.parse(raw) : fallback;
+      } catch (e) {
+        return fallback;
+      }
+    }
+
+    function setData(key, value) {
+      localStorage.setItem('eb_' + key, JSON.stringify(value));
+      localStorage.setItem('eb_lastEdited', new Date().toLocaleString());
+      updateDashStats();
+    }
+
+    // ============================================================
+    // TOAST
+    // ============================================================
+    const toastEl = document.getElementById('toast');
+    let toastTimer;
+
+    function showToast(msg = '✓ Saved successfully') {
+      toastEl.textContent = msg;
+      toastEl.classList.add('show');
+      clearTimeout(toastTimer);
+      toastTimer = setTimeout(() => toastEl.classList.remove('show'), 3000);
+    }
+
+    // ============================================================
+    // PANEL NAVIGATION
+    // ============================================================
+    function showPanel(id) {
+      document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+      document.querySelectorAll('.sidebar-nav-item').forEach(n => n.classList.remove('active'));
+      const panel = document.getElementById('panel-' + id);
+      if (panel) panel.classList.add('active');
+      const nav = document.querySelector(`[data-panel="${id}"]`);
+      if (nav) nav.classList.add('active');
+    }
+
+    document.getElementById('sidebar-nav').addEventListener('click', e => {
+      const item = e.target.closest('[data-panel]');
+      if (item) showPanel(item.dataset.panel);
+    });
+
+    document.querySelectorAll('[data-goto]').forEach(btn => {
+      btn.addEventListener('click', () => showPanel(btn.dataset.goto));
+    });
+
+    // ============================================================
+    // SAVE DISPATCH
+    // ============================================================
+    document.addEventListener('click', e => {
+      const btn = e.target.closest('[data-save]');
+      if (!btn) return;
+      const key = btn.dataset.save;
+      const savers = {
+        hero: saveHero, about: saveAbout, services: saveServices,
+        gallery: saveGallery, faqs: saveFAQs,
+        testimonials: saveTestimonials, contact: saveContact
+      };
+      if (savers[key]) { savers[key](); showToast(); }
+    });
+
+    // ============================================================
+    // IMAGE PREVIEW HELPER
+    // ============================================================
+    function bindImagePreview(inputId, imgId) {
+      const input = document.getElementById(inputId);
+      const img   = document.getElementById(imgId);
+      if (!input || !img) return;
+      function update() {
+        const url = input.value.trim();
+        if (url) {
+          img.src = url;
+          img.style.display = 'block';
+        } else {
+          img.style.display = 'none';
+        }
+      }
+      input.addEventListener('input', update);
+      update();
+    }
+
+    // ============================================================
+    // DASHBOARD STATS
+    // ============================================================
+    function updateDashStats() {
+      const gallery = getData('gallery', DEFAULTS.gallery);
+      const faqs    = getData('faqs', DEFAULTS.faqs);
+      const last    = localStorage.getItem('eb_lastEdited') || 'Never';
+      const el = id => document.getElementById(id);
+      if (el('stat-gallery-count')) el('stat-gallery-count').textContent = gallery.length;
+      if (el('stat-faq-count'))     el('stat-faq-count').textContent     = faqs.length;
+      if (el('stat-last-edited'))   el('stat-last-edited').textContent   = last === 'Never' ? '—' : last.split(',')[0];
+    }
+
+    // ============================================================
+    // HERO
+    // ============================================================
+    function loadHero() {
+      const d = getData('hero', DEFAULTS.hero);
+      document.getElementById('h-eyebrow').value    = d.eyebrow;
+      document.getElementById('h-heading').value    = d.heading;
+      document.getElementById('h-subheading').value = d.subheading;
+      document.getElementById('h-image').value      = d.imageUrl || '';
+      bindImagePreview('h-image', 'h-image-preview-img');
+    }
+
+    function saveHero() {
+      setData('hero', {
+        eyebrow:   document.getElementById('h-eyebrow').value.trim(),
+        heading:   document.getElementById('h-heading').value.trim(),
+        subheading: document.getElementById('h-subheading').value.trim(),
+        imageUrl:  document.getElementById('h-image').value.trim()
+      });
+    }
+
+    // ============================================================
+    // ABOUT
+    // ============================================================
+    function loadAbout() {
+      const d = getData('about', DEFAULTS.about);
+      const set = (id, val) => { const el = document.getElementById(id); if (el) el.value = val; };
+      set('a-heading', d.heading);
+      set('a-p1', d.p1); set('a-p2', d.p2); set('a-p3', d.p3);
+      set('a-s1v', d.stat1Value); set('a-s1l', d.stat1Label);
+      set('a-s2v', d.stat2Value); set('a-s2l', d.stat2Label);
+      set('a-s3v', d.stat3Value); set('a-s3l', d.stat3Label);
+      set('a-image', d.imageUrl || '');
+      bindImagePreview('a-image', 'a-image-preview-img');
+    }
+
+    function saveAbout() {
+      const get = id => document.getElementById(id).value.trim();
+      setData('about', {
+        heading: get('a-heading'),
+        p1: get('a-p1'), p2: get('a-p2'), p3: get('a-p3'),
+        stat1Value: get('a-s1v'), stat1Label: get('a-s1l'),
+        stat2Value: get('a-s2v'), stat2Label: get('a-s2l'),
+        stat3Value: get('a-s3v'), stat3Label: get('a-s3l'),
+        imageUrl: get('a-image')
+      });
+    }
+
+    // ============================================================
+    // SERVICES
+    // ============================================================
+    function loadServices() {
+      const services = getData('services', DEFAULTS.services);
+      const grid = document.getElementById('services-admin-grid');
+      grid.innerHTML = services.map((s, i) => `
+        <div class="card" style="margin-bottom:0;">
+          <div class="card-title">Service ${i + 1}</div>
+          <div class="field-group">
+            <label class="field-label" for="svc-title-${i}">Title</label>
+            <input class="field-input" type="text" id="svc-title-${i}" value="${esc(s.title)}" />
+          </div>
+          <div class="field-group">
+            <label class="field-label" for="svc-desc-${i}">Description</label>
+            <textarea class="field-textarea" id="svc-desc-${i}">${esc(s.desc)}</textarea>
+          </div>
+        </div>`).join('');
+    }
+
+    function saveServices() {
+      const services = getData('services', DEFAULTS.services);
+      const saved = services.map((_, i) => ({
+        title: document.getElementById(`svc-title-${i}`).value.trim(),
+        desc:  document.getElementById(`svc-desc-${i}`).value.trim()
+      }));
+      setData('services', saved);
+    }
+
+    // ============================================================
+    // GALLERY (with drag-to-reorder)
+    // ============================================================
+    let galleryDragSrc = null;
+
+    function renderGalleryAdmin() {
+      const items = getData('gallery', DEFAULTS.gallery);
+      const grid  = document.getElementById('gallery-admin-grid');
+      const warn  = document.getElementById('gallery-warning');
+      if (warn) warn.style.display = items.length >= 20 ? 'block' : 'none';
+
+      grid.innerHTML = items.map((item, i) => `
+        <div class="gallery-admin-item" draggable="true" data-index="${i}">
+          <div class="gallery-admin-thumb">
+            ${item.url ? `<img src="${esc(item.url)}" alt="${esc(item.alt || '')}" loading="lazy" />` : ''}
+            <div class="drag-handle" aria-hidden="true">
+              <svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M3.75 9h16.5m-16.5 6.75h16.5" /></svg>
+            </div>
+          </div>
+          <div class="gallery-admin-fields">
+            <input class="field-input" type="url" placeholder="Image URL https://..." value="${esc(item.url)}" data-field="url" data-index="${i}" />
+            <input class="field-input" type="text" placeholder="Caption" value="${esc(item.caption)}" data-field="caption" data-index="${i}" />
+            <input class="field-input" type="text" placeholder="Alt text" value="${esc(item.alt || '')}" data-field="alt" data-index="${i}" />
+          </div>
+          <div class="gallery-admin-footer">
+            <button class="btn-delete" data-delete-gallery="${i}">Delete</button>
+          </div>
+        </div>`).join('');
+
+      bindGalleryDrag();
+    }
+
+    function bindGalleryDrag() {
+      const items = document.querySelectorAll('.gallery-admin-item');
+      items.forEach(item => {
+        item.addEventListener('dragstart', e => {
+          galleryDragSrc = item;
+          e.dataTransfer.effectAllowed = 'move';
+          setTimeout(() => item.style.opacity = '0.5', 0);
+        });
+        item.addEventListener('dragend', () => { item.style.opacity = '1'; });
+        item.addEventListener('dragover', e => { e.preventDefault(); item.classList.add('drag-over'); });
+        item.addEventListener('dragleave', () => item.classList.remove('drag-over'));
+        item.addEventListener('drop', e => {
+          e.preventDefault();
+          item.classList.remove('drag-over');
+          if (galleryDragSrc === item) return;
+          const data = collectGalleryState();
+          const from = parseInt(galleryDragSrc.dataset.index);
+          const to   = parseInt(item.dataset.index);
+          const moved = data.splice(from, 1)[0];
+          data.splice(to, 0, moved);
+          setData('gallery', data);
+          renderGalleryAdmin();
+        });
+      });
+    }
+
+    function collectGalleryState() {
+      const items = getData('gallery', DEFAULTS.gallery);
+      document.querySelectorAll('.gallery-admin-item').forEach(el => {
+        const i = parseInt(el.dataset.index);
+        if (!items[i]) return;
+        const url     = el.querySelector('[data-field="url"]');
+        const caption = el.querySelector('[data-field="caption"]');
+        const alt     = el.querySelector('[data-field="alt"]');
+        if (url)     items[i].url     = url.value.trim();
+        if (caption) items[i].caption = caption.value.trim();
+        if (alt)     items[i].alt     = alt.value.trim();
+      });
+      return items;
+    }
+
+    document.getElementById('gallery-add-btn').addEventListener('click', () => {
+      const items = collectGalleryState();
+      items.push({ url: '', caption: '', alt: '' });
+      setData('gallery', items);
+      renderGalleryAdmin();
+    });
+
+    document.getElementById('gallery-admin-grid').addEventListener('click', e => {
+      const btn = e.target.closest('[data-delete-gallery]');
+      if (!btn) return;
+      const i = parseInt(btn.dataset.deleteGallery);
+      const items = collectGalleryState();
+      items.splice(i, 1);
+      setData('gallery', items);
+      renderGalleryAdmin();
+    });
+
+    // Live URL → thumbnail preview
+    document.getElementById('gallery-admin-grid').addEventListener('input', e => {
+      const input = e.target;
+      if (input.dataset.field !== 'url') return;
+      const item  = input.closest('.gallery-admin-item');
+      const thumb = item.querySelector('.gallery-admin-thumb');
+      let img = thumb.querySelector('img');
+      const url = input.value.trim();
+      if (url) {
+        if (!img) {
+          img = document.createElement('img');
+          img.loading = 'lazy';
+          thumb.insertBefore(img, thumb.firstChild);
+        }
+        img.src = url;
+      } else if (img) {
+        img.remove();
+      }
+    });
+
+    function saveGallery() {
+      setData('gallery', collectGalleryState());
+    }
+
+    // ============================================================
+    // FAQ (with drag-to-reorder)
+    // ============================================================
+    let faqDragSrc = null;
+
+    function renderFAQAdmin() {
+      const faqs = getData('faqs', DEFAULTS.faqs);
+      const list = document.getElementById('faq-admin-list');
+      list.innerHTML = faqs.map((f, i) => `
+        <div class="faq-admin-item" draggable="true" data-index="${i}">
+          <div class="faq-drag-handle" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" d="M3.75 9h16.5m-16.5 6.75h16.5" /></svg>
+          </div>
+          <div class="faq-admin-fields">
+            <div class="field-group" style="margin-bottom:0;">
+              <label class="field-label" for="faq-q-${i}">Question</label>
+              <input class="field-input" type="text" id="faq-q-${i}" value="${esc(f.q)}" />
+            </div>
+            <div class="field-group" style="margin-bottom:0;">
+              <label class="field-label" for="faq-a-${i}">Answer</label>
+              <textarea class="field-textarea" id="faq-a-${i}">${esc(f.a)}</textarea>
+            </div>
+          </div>
+          <div class="faq-admin-actions">
+            <button class="btn-delete" data-delete-faq="${i}" aria-label="Delete FAQ item ${i + 1}">Delete</button>
+          </div>
+        </div>`).join('');
+
+      bindFAQDrag();
+    }
+
+    function bindFAQDrag() {
+      const items = document.querySelectorAll('.faq-admin-item');
+      items.forEach(item => {
+        item.addEventListener('dragstart', e => {
+          faqDragSrc = item;
+          e.dataTransfer.effectAllowed = 'move';
+          setTimeout(() => item.style.opacity = '0.5', 0);
+        });
+        item.addEventListener('dragend', () => { item.style.opacity = '1'; });
+        item.addEventListener('dragover', e => { e.preventDefault(); item.classList.add('drag-over'); });
+        item.addEventListener('dragleave', () => item.classList.remove('drag-over'));
+        item.addEventListener('drop', e => {
+          e.preventDefault();
+          item.classList.remove('drag-over');
+          if (faqDragSrc === item) return;
+          const data = collectFAQState();
+          const from = parseInt(faqDragSrc.dataset.index);
+          const to   = parseInt(item.dataset.index);
+          const moved = data.splice(from, 1)[0];
+          data.splice(to, 0, moved);
+          setData('faqs', data);
+          renderFAQAdmin();
+        });
+      });
+    }
+
+    function collectFAQState() {
+      const faqs = getData('faqs', DEFAULTS.faqs);
+      document.querySelectorAll('.faq-admin-item').forEach(el => {
+        const i = parseInt(el.dataset.index);
+        if (!faqs[i]) return;
+        const q = document.getElementById(`faq-q-${i}`);
+        const a = document.getElementById(`faq-a-${i}`);
+        if (q) faqs[i].q = q.value.trim();
+        if (a) faqs[i].a = a.value.trim();
+      });
+      return faqs;
+    }
+
+    document.getElementById('faq-add-btn').addEventListener('click', () => {
+      const faqs = collectFAQState();
+      faqs.push({ q: '', a: '' });
+      setData('faqs', faqs);
+      renderFAQAdmin();
+    });
+
+    document.getElementById('faq-admin-list').addEventListener('click', e => {
+      const btn = e.target.closest('[data-delete-faq]');
+      if (!btn) return;
+      const i = parseInt(btn.dataset.deleteFaq);
+      const faqs = collectFAQState();
+      faqs.splice(i, 1);
+      setData('faqs', faqs);
+      renderFAQAdmin();
+    });
+
+    function saveFAQs() {
+      setData('faqs', collectFAQState());
+    }
+
+    // ============================================================
+    // TESTIMONIALS
+    // ============================================================
+    function loadTestimonials() {
+      const items = getData('testimonials', DEFAULTS.testimonials);
+      const list  = document.getElementById('testimonial-admin-list');
+      list.innerHTML = items.map((t, i) => `
+        <div class="card testimonial-admin-card">
+          <div class="card-title">Testimonial ${i + 1}</div>
+          <div class="field-group">
+            <label class="field-label" for="test-quote-${i}">Quote</label>
+            <textarea class="field-textarea tall" id="test-quote-${i}">${esc(t.quote)}</textarea>
+          </div>
+          <div class="two-col">
+            <div class="field-group">
+              <label class="field-label" for="test-name-${i}">Bride's Name</label>
+              <input class="field-input" type="text" id="test-name-${i}" value="${esc(t.name)}" />
+            </div>
+            <div class="field-group">
+              <label class="field-label" for="test-date-${i}">Wedding Month / Note</label>
+              <input class="field-input" type="text" id="test-date-${i}" value="${esc(t.date)}" placeholder="e.g. October Wedding" />
+            </div>
+          </div>
+        </div>`).join('');
+    }
+
+    function saveTestimonials() {
+      const items = getData('testimonials', DEFAULTS.testimonials);
+      const saved = items.map((_, i) => ({
+        quote: document.getElementById(`test-quote-${i}`).value.trim(),
+        name:  document.getElementById(`test-name-${i}`).value.trim(),
+        date:  document.getElementById(`test-date-${i}`).value.trim()
+      }));
+      setData('testimonials', saved);
+    }
+
+    // ============================================================
+    // CONTACT INFO
+    // ============================================================
+    function loadContact() {
+      const d = getData('contact', DEFAULTS.contact);
+      const set = (id, val) => { const el = document.getElementById(id); if (el) el.value = val; };
+      set('ci-email',         d.email);
+      set('ci-instagram',     d.instagram);
+      set('ci-location',      d.location);
+      set('ci-tagline',       d.tagline);
+      set('ci-response-note', d.responseNote);
+    }
+
+    function saveContact() {
+      const get = id => document.getElementById(id).value.trim();
+      setData('contact', {
+        email:        get('ci-email'),
+        instagram:    get('ci-instagram'),
+        location:     get('ci-location'),
+        tagline:      get('ci-tagline'),
+        responseNote: get('ci-response-note')
+      });
+    }
+
+    // ============================================================
+    // UTILITY
+    // ============================================================
+    function esc(str) {
+      if (!str) return '';
+      return String(str)
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;');
+    }
+
+    // ============================================================
+    // INIT
+    // ============================================================
+    function initAdmin() {
+      loadHero();
+      loadAbout();
+      loadServices();
+      renderGalleryAdmin();
+      renderFAQAdmin();
+      loadTestimonials();
+      loadContact();
+      updateDashStats();
+    }
+
+    checkAuth();
+  </script>
+
+</body>
+</html>
