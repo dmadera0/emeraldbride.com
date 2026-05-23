@@ -2009,8 +2009,7 @@
       if (heading)  heading.textContent  = d.heading;
       if (sub)      sub.textContent      = d.subheading;
       const heroEl = document.querySelector('.hero');
-      // Fall back to DEFAULTS if stored value is an empty string (stale admin save)
-      const imageUrl = d.imageUrl || DEFAULTS.hero.imageUrl;
+      const imageUrl = (d.imageUrl && !d.imageUrl.endsWith('.svg')) ? d.imageUrl : DEFAULTS.hero.imageUrl;
       if (imageUrl && heroEl) {
         heroEl.style.backgroundImage    = `url(${imageUrl})`;
         heroEl.style.backgroundSize     = 'cover';
@@ -2035,8 +2034,7 @@
       set('stat-3-value',   d.stat3Value);
       set('stat-3-label',   d.stat3Label);
       const aboutImg = document.querySelector('.about-image');
-      // Fall back to DEFAULTS if stored value is an empty string (stale admin save)
-      const aboutImageUrl = d.imageUrl || DEFAULTS.about.imageUrl;
+      const aboutImageUrl = (d.imageUrl && !d.imageUrl.endsWith('.svg')) ? d.imageUrl : DEFAULTS.about.imageUrl;
       if (aboutImageUrl && aboutImg) {
         aboutImg.style.backgroundImage    = `url(${aboutImageUrl})`;
         aboutImg.style.backgroundSize     = 'cover';
@@ -2078,11 +2076,12 @@
 
     function renderGallery() {
       const stored = getData('gallery', null);
-      // If stored data exists but has empty URLs (stale admin save), fill from DEFAULTS
-      const items = stored
+      const isValidUrl = url => url && !url.endsWith('.svg');
+      const hasValidItems = stored && stored.length > 0 && stored.some(item => isValidUrl(item.url));
+      const items = hasValidItems
         ? stored.map((item, i) => ({
             ...item,
-            url: item.url || (DEFAULTS.gallery[i] ? DEFAULTS.gallery[i].url : '')
+            url: isValidUrl(item.url) ? item.url : (DEFAULTS.gallery[i] ? DEFAULTS.gallery[i].url : '')
           }))
         : DEFAULTS.gallery;
       const grid   = document.getElementById('gallery-grid');
@@ -2287,9 +2286,9 @@
       });
     });
 
-    <!-- TODO: Replace FORMSPREE_ENDPOINT_ID with actual endpoint from formspree.io
-         Steps: 1. Go to formspree.io  2. Create free account  3. New Form → copy the ID
-         The ID looks like: xpzgkwqr  Full URL: https://formspree.io/f/xpzgkwqr -->
+    // TODO: Replace FORMSPREE_ENDPOINT_ID with actual endpoint from formspree.io
+    // Steps: 1. Go to formspree.io  2. Create free account  3. New Form → copy the ID
+    // The ID looks like: xpzgkwqr  Full URL: https://formspree.io/f/xpzgkwqr
     form.addEventListener('submit', async e => {
       e.preventDefault();
       let allValid = true;
