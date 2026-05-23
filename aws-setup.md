@@ -354,6 +354,37 @@ This adds a second layer of protection (HTTP Basic Auth in the browser prompt) b
 
 ---
 
+## 8b. Google Search Console Setup
+
+After the site is live at emeraldbride.com, submit it to Google Search Console
+to accelerate indexing. This is free and takes 10 minutes.
+
+**Steps:**
+1. Go to search.google.com/search-console
+2. Add property → URL prefix → `https://emeraldbride.com`
+3. Verify ownership via HTML tag method:
+   - Google provides a `<meta name="google-site-verification" content="...">` tag
+   - Add it to index.html `<head>` immediately after the canonical tag
+   - Deploy to S3 and invalidate CloudFront
+   - Click Verify in Search Console
+4. Once verified, go to Sitemaps → Add sitemap → enter `sitemap.xml`
+5. Submit and wait 24–48 hours for Google to crawl
+
+**After submission, monitor:**
+- Coverage report: confirms pages are indexed
+- Core Web Vitals: flags CLS, LCP, or FID issues
+- Rich Results: confirms FAQ schema and LocalBusiness schema are valid
+  (also test at search.google.com/test/rich-results before submitting)
+- Image indexing: check Google Images search for `site:emeraldbride.com`
+
+**Add this placeholder to index.html `<head>` now, ready for the verification code:**
+```html
+<!-- Google Search Console verification — replace content value after verifying -->
+<!-- <meta name="google-site-verification" content="REPLACE_WITH_GSC_CODE" /> -->
+```
+
+---
+
 ## 9. Future Backend Upgrade Path
 
 When you need server-side functionality (form submissions, real admin auth, image uploads), the architecture expands cleanly without touching the existing static layer:

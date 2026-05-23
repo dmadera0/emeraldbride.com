@@ -1,9 +1,51 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+<urlset
+  xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
+  xmlns:image="http://www.google.com/schemas/sitemap-image/1.1">
   <url>
     <loc>https://emeraldbride.com/</loc>
-    <lastmod>2025-01-01</lastmod>
+    <lastmod>2026-05-23</lastmod>
     <changefreq>monthly</changefreq>
     <priority>1.0</priority>
+    <image:image>
+      <image:loc>https://emeraldbride.com/images/hero.jpg</image:loc>
+      <image:title>Emerald Bride — Las Vegas Bridal Makeup Artist Hero</image:title>
+      <image:caption>Luxury bridal makeup by Emerald Bride, Las Vegas</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://emeraldbride.com/images/istockphoto-528908438-1024x1024.jpg</image:loc>
+      <image:title>Soft bridal glam — Garden ceremony</image:title>
+      <image:caption>Bridal makeup look — soft glam for garden ceremony by Emerald Bride</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://emeraldbride.com/images/istockphoto-1296431297-1024x1024.jpg</image:loc>
+      <image:title>Timeless elegance — Ballroom wedding</image:title>
+      <image:caption>Timeless bridal makeup for ballroom wedding by Emerald Bride Las Vegas</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://emeraldbride.com/images/istockphoto-1314528208-1024x1024.jpg</image:loc>
+      <image:title>Golden hour bride</image:title>
+      <image:caption>Bridal makeup photographed in golden hour light by Emerald Bride</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://emeraldbride.com/images/istockphoto-1340302535-1024x1024.jpg</image:loc>
+      <image:title>Editorial bridal — Las Vegas</image:title>
+      <image:caption>Editorial bridal makeup look in Las Vegas by Emerald Bride</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://emeraldbride.com/images/istockphoto-540984850-1024x1024.jpg</image:loc>
+      <image:title>Bridal party — Spring wedding</image:title>
+      <image:caption>Bridal party makeup for spring wedding by Emerald Bride Las Vegas</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://emeraldbride.com/images/istockphoto-621835636-1024x1024.jpg</image:loc>
+      <image:title>Natural glow — Outdoor ceremony</image:title>
+      <image:caption>Natural glow bridal makeup for outdoor ceremony by Emerald Bride</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://emeraldbride.com/images/pexels-rebornfilmes-28861519.jpg</image:loc>
+      <image:title>Romantic smoky eye — Evening reception</image:title>
+      <image:caption>Romantic smoky eye bridal makeup for evening reception by Emerald Bride</image:caption>
+    </image:image>
   </url>
 </urlset>
