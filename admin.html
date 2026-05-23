@@ -676,6 +676,204 @@
     /* ---- SERVICE CARDS GRID ---- */
     .services-admin-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
 
+    /* ---- DROP ZONES ---- */
+    .drop-zone {
+      border: 2px dashed var(--color-border);
+      border-radius: var(--radius-md);
+      overflow: hidden;
+      transition: border-color var(--transition-base), background var(--transition-base);
+      position: relative;
+      background: var(--color-ivory);
+    }
+
+    .drop-zone.dz-over {
+      border-color: var(--color-emerald);
+      background: rgba(27, 67, 50, 0.04);
+    }
+
+    .dz-placeholder {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      padding: 32px 24px;
+      cursor: pointer;
+      text-align: center;
+    }
+
+    .dz-icon { width: 36px; height: 36px; color: var(--color-taupe); }
+
+    .dz-text {
+      font-size: 0.88rem;
+      color: var(--color-charcoal-light);
+      line-height: 1.5;
+      margin: 0;
+    }
+
+    .dz-browse {
+      color: var(--color-emerald);
+      font-weight: 700;
+      text-decoration: underline;
+      text-decoration-color: transparent;
+      transition: text-decoration-color var(--transition-base);
+    }
+
+    .dz-placeholder:hover .dz-browse,
+    .drop-zone.dz-over .dz-browse { text-decoration-color: var(--color-emerald); }
+
+    .dz-ideal-size {
+      font-size: 0.7rem;
+      font-weight: 700;
+      letter-spacing: 0.09em;
+      text-transform: uppercase;
+      color: var(--color-gold);
+      background: rgba(201, 168, 76, 0.1);
+      border: 1px solid rgba(201, 168, 76, 0.25);
+      padding: 4px 14px;
+      border-radius: 20px;
+      white-space: nowrap;
+    }
+
+    .dz-preview { position: relative; }
+
+    .dz-preview > img {
+      width: 100%;
+      display: block;
+      max-height: 260px;
+      object-fit: cover;
+      cursor: pointer;
+    }
+
+    .dz-preview-bar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 8px 12px;
+      background: var(--color-off-white);
+      border-top: 1px solid var(--color-border);
+    }
+
+    .dz-preview-filename {
+      font-size: 0.75rem;
+      color: var(--color-charcoal-light);
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      max-width: 220px;
+    }
+
+    .dz-clear {
+      font-size: 0.72rem;
+      font-weight: 700;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      color: #c0392b;
+      padding: 4px 10px;
+      border-radius: var(--radius-sm);
+      transition: background var(--transition-base);
+      cursor: pointer;
+      background: none;
+      border: none;
+      flex-shrink: 0;
+    }
+
+    .dz-clear:hover { background: rgba(192, 57, 43, 0.07); }
+
+    .dz-size-warning {
+      font-size: 0.78rem;
+      color: #7a5800;
+      background: rgba(201, 168, 76, 0.1);
+      padding: 8px 12px;
+      border-top: 1px solid rgba(201, 168, 76, 0.3);
+    }
+
+    .dz-url-fallback {
+      margin-top: 10px;
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+    }
+
+    .dz-url-label {
+      font-size: 0.68rem;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--color-taupe);
+    }
+
+    /* Gallery drop zone — compact, doubles as thumbnail */
+    .gallery-dz {
+      border-bottom: 1px solid var(--color-border);
+      border-radius: 0;
+      border-left: none;
+      border-right: none;
+      border-top: none;
+    }
+
+    .gallery-dz .dz-placeholder {
+      padding: 20px 16px;
+      gap: 7px;
+      min-height: 120px;
+    }
+
+    .gallery-dz .dz-icon { width: 26px; height: 26px; }
+    .gallery-dz .dz-text { font-size: 0.8rem; }
+    .gallery-dz .dz-ideal-size { font-size: 0.64rem; letter-spacing: 0.07em; }
+
+    .gallery-dz .dz-preview { cursor: pointer; }
+
+    .gallery-dz .dz-preview img {
+      width: 100%;
+      height: 150px;
+      object-fit: cover;
+      display: block;
+      max-height: none;
+    }
+
+    .gallery-change-overlay {
+      position: absolute;
+      inset: 0;
+      background: rgba(27, 67, 50, 0.6);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      opacity: 0;
+      transition: opacity var(--transition-base);
+      pointer-events: none;
+    }
+
+    .gallery-change-overlay span {
+      color: white;
+      font-size: 0.75rem;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+    }
+
+    .gallery-dz:hover .gallery-change-overlay { opacity: 1; }
+    .gallery-dz.dz-over .gallery-change-overlay { opacity: 1; }
+
+    .gallery-dz .dz-preview-bar {
+      padding: 6px 10px;
+      justify-content: flex-end;
+    }
+
+    .gallery-dz .dz-size-warning { font-size: 0.72rem; padding: 6px 10px; }
+
+    .gallery-url-fallback {
+      padding: 8px 12px;
+      border-top: 1px solid var(--color-border);
+      background: var(--color-off-white);
+    }
+
+    .gallery-url-fallback input {
+      font-size: 0.8rem;
+      color: var(--color-taupe);
+      padding: 6px 10px;
+    }
+
     @media (max-width: 900px) {
       .services-admin-grid { grid-template-columns: 1fr; }
       .stats-grid { grid-template-columns: 1fr; }
@@ -834,13 +1032,26 @@
           </div>
 
           <div class="field-group">
-            <label class="field-label" for="h-image">Hero Image URL</label>
-            <input class="field-input" type="url" id="h-image" placeholder="https://..." />
-            <span class="field-hint">Paste a direct image URL. Recommended size: 1920×1080px or larger.</span>
-            <div class="image-preview-wrap">
-              <div class="image-preview" id="h-image-preview">
-                <img id="h-image-preview-img" src="" alt="Hero image preview" loading="lazy" style="display:none;" />
+            <label class="field-label">Hero Image</label>
+            <div class="drop-zone" id="dz-hero">
+              <div class="dz-placeholder" id="dz-hero-ph">
+                <svg class="dz-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5m-13.5-9L12 3m0 0l4.5 4.5M12 3v13.5" /></svg>
+                <p class="dz-text">Drag &amp; drop your hero photo here<br>or <span class="dz-browse">click to browse</span></p>
+                <span class="dz-ideal-size">Ideal: 1920 &times; 1080px &middot; JPG or WebP &middot; under 2MB</span>
               </div>
+              <div class="dz-preview" id="dz-hero-pv" style="display:none;">
+                <img id="dz-hero-img" src="" alt="Hero image preview" />
+                <div class="dz-preview-bar">
+                  <span class="dz-preview-filename" id="dz-hero-name"></span>
+                  <button type="button" class="dz-clear" id="dz-hero-clear">&#215; Remove</button>
+                </div>
+                <div class="dz-size-warning" id="dz-hero-warn" style="display:none;">&#9888; Image exceeds 2MB — compress for faster page loads.</div>
+              </div>
+            </div>
+            <input type="hidden" id="h-image" />
+            <div class="dz-url-fallback">
+              <label class="dz-url-label" for="h-image-url">Or paste a hosted URL</label>
+              <input class="field-input" type="url" id="h-image-url" placeholder="https://your-cdn.com/hero.jpg" />
             </div>
           </div>
 
@@ -913,13 +1124,26 @@
         <div class="card">
           <div class="card-title">Artist Photo</div>
           <div class="field-group">
-            <label class="field-label" for="a-image">Image URL</label>
-            <input class="field-input" type="url" id="a-image" placeholder="https://..." />
-            <span class="field-hint">Portrait orientation recommended — approx 600×800px.</span>
-            <div class="image-preview-wrap">
-              <div class="image-preview" id="a-image-preview" style="max-width:200px; height:260px;">
-                <img id="a-image-preview-img" src="" alt="About image preview" loading="lazy" style="display:none;" />
+            <label class="field-label">Artist Photo</label>
+            <div class="drop-zone" id="dz-about">
+              <div class="dz-placeholder" id="dz-about-ph">
+                <svg class="dz-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5m-13.5-9L12 3m0 0l4.5 4.5M12 3v13.5" /></svg>
+                <p class="dz-text">Drag &amp; drop your portrait photo here<br>or <span class="dz-browse">click to browse</span></p>
+                <span class="dz-ideal-size">Ideal: 600 &times; 800px &middot; Portrait &middot; JPG or WebP &middot; under 2MB</span>
               </div>
+              <div class="dz-preview" id="dz-about-pv" style="display:none;">
+                <img id="dz-about-img" src="" alt="Artist photo preview" style="max-height:280px;" />
+                <div class="dz-preview-bar">
+                  <span class="dz-preview-filename" id="dz-about-name"></span>
+                  <button type="button" class="dz-clear" id="dz-about-clear">&#215; Remove</button>
+                </div>
+                <div class="dz-size-warning" id="dz-about-warn" style="display:none;">&#9888; Image exceeds 2MB — compress for faster page loads.</div>
+              </div>
+            </div>
+            <input type="hidden" id="a-image" />
+            <div class="dz-url-fallback">
+              <label class="dz-url-label" for="a-image-url">Or paste a hosted URL</label>
+              <input class="field-input" type="url" id="a-image-url" placeholder="https://your-cdn.com/portrait.jpg" />
             </div>
           </div>
           <button class="btn-save" data-save="about">Save About</button>
@@ -1210,23 +1434,102 @@
     });
 
     // ============================================================
-    // IMAGE PREVIEW HELPER
+    // DROP ZONE — reusable init for hero / about single-image fields
     // ============================================================
-    function bindImagePreview(inputId, imgId) {
-      const input = document.getElementById(inputId);
-      const img   = document.getElementById(imgId);
-      if (!input || !img) return;
-      function update() {
-        const url = input.value.trim();
-        if (url) {
-          img.src = url;
-          img.style.display = 'block';
-        } else {
-          img.style.display = 'none';
+    function initDropZone({ zoneId, phId, pvId, imgId, nameId, warnId, clearId, valueId, urlId, maxMB }) {
+      const zone       = document.getElementById(zoneId);
+      const ph         = document.getElementById(phId);
+      const pv         = document.getElementById(pvId);
+      const img        = document.getElementById(imgId);
+      const nameEl     = document.getElementById(nameId);
+      const warn       = document.getElementById(warnId);
+      const clearBtn   = document.getElementById(clearId);
+      const valueInput = document.getElementById(valueId);
+      const urlInput   = urlId ? document.getElementById(urlId) : null;
+      if (!zone || !img) return null;
+
+      const fileInput = document.createElement('input');
+      fileInput.type = 'file';
+      fileInput.accept = 'image/*';
+      fileInput.style.display = 'none';
+      document.body.appendChild(fileInput);
+
+      function setImage(url, name) {
+        if (valueInput) valueInput.value = url || '';
+        if (!url) {
+          pv.style.display = 'none';
+          ph.style.display = 'flex';
+          if (warn) warn.style.display = 'none';
+          if (urlInput) urlInput.value = '';
+          return;
         }
+        img.src = url;
+        if (nameEl) nameEl.textContent = name || (url.startsWith('data:') ? 'Uploaded image' : url.split('/').pop().split('?')[0]);
+        pv.style.display = 'block';
+        ph.style.display = 'none';
       }
-      input.addEventListener('input', update);
-      update();
+
+      function processFile(file) {
+        if (!file || !file.type.startsWith('image/')) return;
+        if (warn) warn.style.display = file.size > (maxMB || 2) * 1024 * 1024 ? 'block' : 'none';
+        const reader = new FileReader();
+        reader.onload = e => setImage(e.target.result, file.name);
+        reader.readAsDataURL(file);
+      }
+
+      zone.addEventListener('click', e => {
+        if (clearBtn && (e.target === clearBtn || clearBtn.contains(e.target))) return;
+        if (urlInput && (e.target === urlInput || urlInput.contains(e.target))) return;
+        fileInput.click();
+      });
+
+      fileInput.addEventListener('change', () => {
+        if (fileInput.files[0]) processFile(fileInput.files[0]);
+        fileInput.value = '';
+      });
+
+      zone.addEventListener('dragover', e => {
+        if (!e.dataTransfer.types.includes('Files')) return;
+        e.preventDefault();
+        zone.classList.add('dz-over');
+      });
+      zone.addEventListener('dragleave', e => {
+        if (!zone.contains(e.relatedTarget)) zone.classList.remove('dz-over');
+      });
+      zone.addEventListener('drop', e => {
+        if (!e.dataTransfer.files.length) return;
+        e.preventDefault();
+        zone.classList.remove('dz-over');
+        processFile(e.dataTransfer.files[0]);
+      });
+
+      if (clearBtn) {
+        clearBtn.addEventListener('click', e => { e.stopPropagation(); setImage(''); });
+      }
+
+      if (urlInput) {
+        urlInput.addEventListener('input', () => {
+          const url = urlInput.value.trim();
+          if (url) setImage(url, url.split('/').pop().split('?')[0]);
+        });
+      }
+
+      return { setImage };
+    }
+
+    let dzHero, dzAbout;
+
+    function initDropZones() {
+      dzHero = initDropZone({
+        zoneId: 'dz-hero',  phId: 'dz-hero-ph',  pvId: 'dz-hero-pv',
+        imgId:  'dz-hero-img',  nameId: 'dz-hero-name',  warnId: 'dz-hero-warn',
+        clearId: 'dz-hero-clear', valueId: 'h-image', urlId: 'h-image-url', maxMB: 2
+      });
+      dzAbout = initDropZone({
+        zoneId: 'dz-about', phId: 'dz-about-ph', pvId: 'dz-about-pv',
+        imgId:  'dz-about-img', nameId: 'dz-about-name', warnId: 'dz-about-warn',
+        clearId: 'dz-about-clear', valueId: 'a-image', urlId: 'a-image-url', maxMB: 2
+      });
     }
 
     // ============================================================
@@ -1250,8 +1553,7 @@
       document.getElementById('h-eyebrow').value    = d.eyebrow;
       document.getElementById('h-heading').value    = d.heading;
       document.getElementById('h-subheading').value = d.subheading;
-      document.getElementById('h-image').value      = d.imageUrl || '';
-      bindImagePreview('h-image', 'h-image-preview-img');
+      if (d.imageUrl && dzHero) dzHero.setImage(d.imageUrl);
     }
 
     function saveHero() {
@@ -1274,8 +1576,7 @@
       set('a-s1v', d.stat1Value); set('a-s1l', d.stat1Label);
       set('a-s2v', d.stat2Value); set('a-s2l', d.stat2Label);
       set('a-s3v', d.stat3Value); set('a-s3l', d.stat3Label);
-      set('a-image', d.imageUrl || '');
-      bindImagePreview('a-image', 'a-image-preview-img');
+      if (d.imageUrl && dzAbout) dzAbout.setImage(d.imageUrl);
     }
 
     function saveAbout() {
@@ -1330,25 +1631,138 @@
       const warn  = document.getElementById('gallery-warning');
       if (warn) warn.style.display = items.length >= 20 ? 'block' : 'none';
 
-      grid.innerHTML = items.map((item, i) => `
+      const dzUploadIcon = `<svg class="dz-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5m-13.5-9L12 3m0 0l4.5 4.5M12 3v13.5" /></svg>`;
+      const dragHandleIcon = `<svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M3.75 9h16.5m-16.5 6.75h16.5" /></svg>`;
+
+      grid.innerHTML = items.map((item, i) => {
+        const hasImg = !!item.url;
+        return `
         <div class="gallery-admin-item" draggable="true" data-index="${i}">
-          <div class="gallery-admin-thumb">
-            ${item.url ? `<img src="${esc(item.url)}" alt="${esc(item.alt || '')}" loading="lazy" />` : ''}
-            <div class="drag-handle" aria-hidden="true">
-              <svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M3.75 9h16.5m-16.5 6.75h16.5" /></svg>
+          <div class="drop-zone gallery-dz" id="dz-gal-${i}" data-gal-index="${i}">
+            <div class="dz-placeholder" id="dz-gal-ph-${i}" style="${hasImg ? 'display:none' : ''}">
+              ${dzUploadIcon}
+              <p class="dz-text">Drop photo or <span class="dz-browse">click to browse</span></p>
+              <span class="dz-ideal-size">800 &times; 1000px &middot; JPG/WebP &middot; under 1MB</span>
+            </div>
+            <div class="dz-preview" id="dz-gal-pv-${i}" style="${hasImg ? '' : 'display:none'}">
+              <div style="position:relative;">
+                <img src="${esc(item.url)}" alt="${esc(item.alt || '')}" loading="lazy" />
+                <div class="gallery-change-overlay"><span>Change Photo</span></div>
+                <div class="drag-handle" aria-label="Drag to reorder">${dragHandleIcon}</div>
+              </div>
+              <div class="dz-preview-bar">
+                <div class="dz-size-warning" id="dz-gal-warn-${i}" style="display:none; border-top:none; padding:0; background:none;">&#9888; Over 1MB</div>
+                <button type="button" class="dz-clear dz-gal-clear" data-gal-clear="${i}">&#215; Remove</button>
+              </div>
+            </div>
+            <div class="gallery-url-fallback" id="dz-gal-url-wrap-${i}" style="${hasImg ? 'display:none' : ''}">
+              <input class="field-input" type="url" id="dz-gal-url-${i}" placeholder="Or paste a hosted URL…" style="font-size:0.8rem;" />
             </div>
           </div>
           <div class="gallery-admin-fields">
-            <input class="field-input" type="url" placeholder="Image URL https://..." value="${esc(item.url)}" data-field="url" data-index="${i}" />
+            <input type="hidden" data-field="url" data-index="${i}" value="${esc(item.url)}" />
             <input class="field-input" type="text" placeholder="Caption" value="${esc(item.caption)}" data-field="caption" data-index="${i}" />
-            <input class="field-input" type="text" placeholder="Alt text" value="${esc(item.alt || '')}" data-field="alt" data-index="${i}" />
+            <input class="field-input" type="text" placeholder="Alt text (describe the image)" value="${esc(item.alt || '')}" data-field="alt" data-index="${i}" />
           </div>
           <div class="gallery-admin-footer">
             <button class="btn-delete" data-delete-gallery="${i}">Delete</button>
           </div>
-        </div>`).join('');
+        </div>`;
+      }).join('');
 
       bindGalleryDrag();
+      initGalleryDropZones();
+    }
+
+    function initGalleryDropZones() {
+      document.querySelectorAll('.gallery-dz').forEach(zone => {
+        const i         = parseInt(zone.dataset.galIndex);
+        const ph        = document.getElementById(`dz-gal-ph-${i}`);
+        const pv        = document.getElementById(`dz-gal-pv-${i}`);
+        const pvImg     = pv ? pv.querySelector('img') : null;
+        const warn      = document.getElementById(`dz-gal-warn-${i}`);
+        const urlWrap   = document.getElementById(`dz-gal-url-wrap-${i}`);
+        const urlInput  = document.getElementById(`dz-gal-url-${i}`);
+        const clearBtn  = zone.querySelector('.dz-gal-clear');
+        const item      = zone.closest('.gallery-admin-item');
+        const hiddenUrl = item ? item.querySelector('[data-field="url"]') : null;
+
+        // Hidden file input — avoids z-index conflicts with drag-to-reorder
+        const fileInput = document.createElement('input');
+        fileInput.type = 'file';
+        fileInput.accept = 'image/*';
+        fileInput.style.display = 'none';
+        document.body.appendChild(fileInput);
+
+        function showImage(url, filename) {
+          if (!url) return;
+          if (pvImg) { pvImg.src = url; }
+          if (hiddenUrl) hiddenUrl.value = url;
+          if (ph) ph.style.display = 'none';
+          if (pv) pv.style.display = '';
+          if (urlWrap) urlWrap.style.display = 'none';
+        }
+
+        function clearImage() {
+          if (pvImg) pvImg.src = '';
+          if (hiddenUrl) hiddenUrl.value = '';
+          if (pv) pv.style.display = 'none';
+          if (ph) ph.style.display = '';
+          if (urlWrap) urlWrap.style.display = '';
+          if (urlInput) urlInput.value = '';
+          if (warn) warn.style.display = 'none';
+        }
+
+        function processFile(file) {
+          if (!file || !file.type.startsWith('image/')) return;
+          if (warn) warn.style.display = file.size > 1024 * 1024 ? 'block' : 'none';
+          const reader = new FileReader();
+          reader.onload = e => showImage(e.target.result, file.name);
+          reader.readAsDataURL(file);
+        }
+
+        // Click on placeholder or "change photo" overlay → file picker
+        zone.addEventListener('click', e => {
+          if (e.target.closest('.dz-gal-clear') || e.target.closest('.btn-delete')) return;
+          fileInput.click();
+        });
+
+        fileInput.addEventListener('change', () => {
+          if (fileInput.files[0]) processFile(fileInput.files[0]);
+          fileInput.value = '';
+        });
+
+        // File drag-over — check it's a file drag, not element reorder
+        zone.addEventListener('dragover', e => {
+          if (!e.dataTransfer.types.includes('Files')) return;
+          e.preventDefault();
+          e.stopPropagation();
+          zone.classList.add('dz-over');
+        });
+        zone.addEventListener('dragleave', e => {
+          if (!zone.contains(e.relatedTarget)) zone.classList.remove('dz-over');
+        });
+        zone.addEventListener('drop', e => {
+          if (!e.dataTransfer.files.length) return;
+          e.preventDefault();
+          e.stopPropagation();
+          zone.classList.remove('dz-over');
+          processFile(e.dataTransfer.files[0]);
+        });
+
+        if (clearBtn) {
+          clearBtn.addEventListener('click', e => { e.stopPropagation(); clearImage(); });
+        }
+
+        if (urlInput) {
+          urlInput.addEventListener('input', () => {
+            const url = urlInput.value.trim();
+            if (url) showImage(url);
+          });
+          // Prevent URL input click from triggering fileInput
+          urlInput.addEventListener('click', e => e.stopPropagation());
+        }
+      });
     }
 
     function bindGalleryDrag() {
@@ -1409,25 +1823,7 @@
       renderGalleryAdmin();
     });
 
-    // Live URL → thumbnail preview
-    document.getElementById('gallery-admin-grid').addEventListener('input', e => {
-      const input = e.target;
-      if (input.dataset.field !== 'url') return;
-      const item  = input.closest('.gallery-admin-item');
-      const thumb = item.querySelector('.gallery-admin-thumb');
-      let img = thumb.querySelector('img');
-      const url = input.value.trim();
-      if (url) {
-        if (!img) {
-          img = document.createElement('img');
-          img.loading = 'lazy';
-          thumb.insertBefore(img, thumb.firstChild);
-        }
-        img.src = url;
-      } else if (img) {
-        img.remove();
-      }
-    });
+    // Gallery URL inputs handled per-item by initGalleryDropZones()
 
     function saveGallery() {
       setData('gallery', collectGalleryState());
@@ -1600,6 +1996,7 @@
     // INIT
     // ============================================================
     function initAdmin() {
+      initDropZones();   // must run before loadHero/loadAbout so handlers exist
       loadHero();
       loadAbout();
       loadServices();
