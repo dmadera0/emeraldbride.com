@@ -1076,6 +1076,11 @@
               <label class="dz-url-label" for="h-image-url">Or paste a hosted URL</label>
               <input class="field-input" type="url" id="h-image-url" placeholder="https://your-cdn.com/hero.jpg" />
             </div>
+            <p class="field-hint" style="margin-top:6px;">
+              ℹ After AWS setup, your images folder is at:
+              <code style="font-size:0.8rem; background:var(--color-ivory); padding:2px 6px; border-radius:3px;">https://emeraldbride.com/images/your-photo.jpg</code>
+              — upload your photo to S3 in the <code style="font-size:0.8rem; background:var(--color-ivory); padding:2px 6px; border-radius:3px;">images/</code> folder, then paste that URL here.
+            </p>
           </div>
 
           <button class="btn-save" data-save="hero">Save Hero</button>
@@ -1168,6 +1173,10 @@
               <label class="dz-url-label" for="a-image-url">Or paste a hosted URL</label>
               <input class="field-input" type="url" id="a-image-url" placeholder="https://your-cdn.com/portrait.jpg" />
             </div>
+            <p class="field-hint" style="margin-top:6px;">
+              ℹ Upload your photo to S3 in the <code style="font-size:0.8rem; background:var(--color-ivory); padding:2px 6px; border-radius:3px;">images/</code> folder, then paste the URL:
+              <code style="font-size:0.8rem; background:var(--color-ivory); padding:2px 6px; border-radius:3px;">https://emeraldbride.com/images/artist.jpg</code>
+            </p>
           </div>
           <button class="btn-save" data-save="about">Save About</button>
         </div>
@@ -1516,9 +1525,21 @@
 
       function processFile(file) {
         if (!file || !file.type.startsWith('image/')) return;
-        if (warn) warn.style.display = file.size > (maxMB || 2) * 1024 * 1024 ? 'block' : 'none';
         const reader = new FileReader();
-        reader.onload = e => setImage(e.target.result, file.name);
+        reader.onload = e => {
+          // Preview only — do NOT store base64 in localStorage (storage quota risk).
+          // To publish: upload this image to your S3 images/ folder, then paste the URL below.
+          if (warn) {
+            warn.style.display = 'block';
+            warn.textContent = '⚠ Preview only — this file is not saved. To publish: upload this image to your S3 images/ folder (or any CDN), then paste the URL in the "Or paste a hosted URL" field below.';
+            warn.style.color = '#7a5800';
+            warn.style.fontStyle = 'italic';
+          }
+          if (valueInput) valueInput.value = '';
+          img.src = e.target.result;
+          pv.style.display = 'block';
+          ph.style.display = 'none';
+        };
         reader.readAsDataURL(file);
       }
 
@@ -1602,12 +1623,17 @@
     }
 
     function saveHero() {
-      setData('hero', {
-        eyebrow:   document.getElementById('h-eyebrow').value.trim(),
-        heading:   document.getElementById('h-heading').value.trim(),
+      const heroData = {
+        eyebrow:    document.getElementById('h-eyebrow').value.trim(),
+        heading:    document.getElementById('h-heading').value.trim(),
         subheading: document.getElementById('h-subheading').value.trim(),
-        imageUrl:  document.getElementById('h-image').value.trim()
-      });
+        imageUrl:   document.getElementById('h-image').value.trim()
+      };
+      if (isBase64Image(heroData.imageUrl)) {
+        showToast('⚠ Upload rejected — paste a hosted URL instead. See note below image field.');
+        return;
+      }
+      setData('hero', heroData);
       clearDirty();
     }
 
@@ -1627,13 +1653,18 @@
 
     function saveAbout() {
       const get = id => document.getElementById(id).value.trim();
+      const imageUrl = get('a-image');
+      if (isBase64Image(imageUrl)) {
+        showToast('⚠ Upload rejected — paste a hosted URL instead. See note below image field.');
+        return;
+      }
       setData('about', {
         heading: get('a-heading'),
         p1: get('a-p1'), p2: get('a-p2'), p3: get('a-p3'),
         stat1Value: get('a-s1v'), stat1Label: get('a-s1l'),
         stat2Value: get('a-s2v'), stat2Label: get('a-s2l'),
         stat3Value: get('a-s3v'), stat3Label: get('a-s3l'),
-        imageUrl: get('a-image')
+        imageUrl
       });
       clearDirty();
     }
@@ -1763,9 +1794,19 @@
 
         function processFile(file) {
           if (!file || !file.type.startsWith('image/')) return;
-          if (warn) warn.style.display = file.size > 1024 * 1024 ? 'block' : 'none';
           const reader = new FileReader();
-          reader.onload = e => showImage(e.target.result, file.name);
+          reader.onload = e => {
+            // Preview only — do NOT store base64 in the hidden url input.
+            if (pvImg) pvImg.src = e.target.result;
+            if (ph) ph.style.display = 'none';
+            if (pv) pv.style.display = '';
+            if (urlWrap) urlWrap.style.display = '';
+            if (warn) {
+              warn.style.display = 'block';
+              warn.textContent = '⚠ Preview only — not saved. Host this image and paste the URL below to publish it.';
+            }
+            // hiddenUrl intentionally NOT set — keeps base64 out of localStorage
+          };
           reader.readAsDataURL(file);
         }
 
@@ -1874,7 +1915,13 @@
     // Gallery URL inputs handled per-item by initGalleryDropZones()
 
     function saveGallery() {
-      setData('gallery', collectGalleryState());
+      const saved = collectGalleryState();
+      const hasBase64 = saved.some(item => isBase64Image(item.url));
+      if (hasBase64) {
+        showToast('⚠ One or more images were uploaded directly — use hosted URLs instead. Those images were not saved.');
+        return;
+      }
+      setData('gallery', saved);
       clearDirty();
     }
 
@@ -2042,6 +2089,30 @@
         .replace(/</g, '&lt;')
         .replace(/>/g, '&gt;')
         .replace(/"/g, '&quot;');
+    }
+
+    // ============================================================
+    // STORAGE QUOTA GUARD — Fix 17
+    // Prevents localStorage overflow from base64 image uploads.
+    // TODO: Replace URL input with S3 presigned upload flow when backend is ready.
+    // Flow: POST /api/gallery/presign → PUT to S3 presigned URL → save CloudFront URL.
+    // The admin panel UI already handles the URL-input pattern — just swap the source of the URL.
+    // ============================================================
+    function getLocalStorageUsageKB() {
+      let total = 0;
+      for (const key in localStorage) {
+        if (!Object.prototype.hasOwnProperty.call(localStorage, key)) continue;
+        total += (localStorage[key].length + key.length) * 2;
+      }
+      return Math.round(total / 1024);
+    }
+
+    function isStorageNearLimit() {
+      return getLocalStorageUsageKB() > 3500;
+    }
+
+    function isBase64Image(str) {
+      return typeof str === 'string' && str.startsWith('data:image');
     }
 
     // ============================================================

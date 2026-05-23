@@ -237,19 +237,34 @@ In Route 53 → Hosted zones → emeraldbride.com → Create record:
 
 ## 6. Deploying Updates
 
-Every time you update `index.html` or `admin.html`, run:
+Every time you update site files, run:
 
 ```bash
-# 1. Upload changed HTML files to S3
+# 1. Upload all static assets (images, xml, txt) with long cache — 1 year
 aws s3 sync . s3://emeraldbride.com \
   --exclude "*" \
-  --include "*.html"
+  --include "*.xml" \
+  --include "*.txt" \
+  --include "images/*" \
+  --cache-control "max-age=31536000" \
+  --exclude "images/*.html"
 
-# 2. Invalidate CloudFront cache so visitors see the update immediately
+# 2. Upload HTML files with no-cache so visitors always get the latest version
+aws s3 sync . s3://emeraldbride.com \
+  --exclude "*" \
+  --include "*.html" \
+  --cache-control "no-cache, no-store, must-revalidate" \
+  --content-type "text/html"
+
+# 3. Invalidate CloudFront cache so edge nodes serve the new files immediately
 aws cloudfront create-invalidation \
   --distribution-id YOUR_DIST_ID \
   --paths "/*"
 ```
+
+**Cache strategy:**
+- Images and static assets use `max-age=31536000` (1 year) — filenames don't change and CloudFront invalidation handles cache busting when you do update them.
+- HTML files use `no-cache` so visitors always get the latest page without needing an explicit invalidation.
 
 **Why both steps?**
 - `s3 sync` uploads only changed files (fast, idempotent)

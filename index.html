@@ -20,11 +20,28 @@
   <meta name="twitter:image" content="https://emeraldbride.com/og-image.jpg" />
 
   <link rel="canonical" href="https://emeraldbride.com" />
+  <link rel="sitemap" type="application/xml" href="/sitemap.xml" />
+
+  <!-- Mobile browser chrome color -->
+  <meta name="theme-color" content="#1B4332" />
+
+  <!-- TODO: Generate favicon files from the logo.
+       Use realfavicongenerator.net — upload the logo, download the package,
+       place files in ./images/ directory. -->
+  <link rel="icon" type="image/svg+xml" href="./images/favicon.svg" />
+  <link rel="icon" type="image/png" href="./images/favicon.png" />
+  <link rel="apple-touch-icon" href="./images/apple-touch-icon.png" />
 
   <!-- Google Fonts -->
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400&family=Lato:wght@300;400;700&display=swap" rel="stylesheet" />
+
+  <!-- Preload critical above-fold image -->
+  <link rel="preload" as="image" href="./images/hero.jpg" fetchpriority="high" />
+
+  <!-- DNS prefetch for external services -->
+  <link rel="dns-prefetch" href="https://formspree.io" />
 
   <!-- Schema.org JSON-LD -->
   <script type="application/ld+json">
@@ -52,10 +69,52 @@
         },
         "openingHours": "Mo-Su 07:00-20:00",
         "priceRange": "$$$",
+        "hasMap": "https://maps.google.com/?q=Las+Vegas,+NV",
         "sameAs": [
           "https://www.instagram.com/emeraldbride"
-        ]
-      },
+        ],
+        "areaServed": [
+          { "@type": "City",    "name": "Las Vegas", "sameAs": "https://en.wikipedia.org/wiki/Las_Vegas" },
+          { "@type": "State",   "name": "Nevada" },
+          { "@type": "Country", "name": "United States" }
+        ],
+        "knowsAbout": [
+          "Bridal Makeup", "Wedding Makeup", "Airbrush Makeup",
+          "Bridal Party Makeup", "Destination Wedding Makeup"
+        ],
+        "makesOffer": [
+          { "@type": "Offer", "name": "Bridal Glam",           "description": "Full wedding-day makeup application for the bride." },
+          { "@type": "Offer", "name": "Bridal Party Makeup",   "description": "Cohesive makeup looks for bridesmaids, mother of the bride, and bridal party." },
+          { "@type": "Offer", "name": "Trial Session",         "description": "Pre-wedding makeup trial to preview and perfect the wedding-day look." }
+        ],
+        "review": [
+          {
+            "@type": "Review",
+            "reviewRating": { "@type": "Rating", "ratingValue": "5", "bestRating": "5" },
+            "author": { "@type": "Person", "name": "Sophia R." },
+            "reviewBody": "Working with Emerald Bride was the best decision I made for my wedding day."
+          },
+          {
+            "@type": "Review",
+            "reviewRating": { "@type": "Rating", "ratingValue": "5", "bestRating": "5" },
+            "author": { "@type": "Person", "name": "Camille T." },
+            "reviewBody": "From the trial to the wedding morning, the experience was seamless and genuinely joyful."
+          },
+          {
+            "@type": "Review",
+            "reviewRating": { "@type": "Rating", "ratingValue": "5", "bestRating": "5" },
+            "author": { "@type": "Person", "name": "Natalia V." },
+            "reviewBody": "My look lasted from 8am through midnight and I felt beautiful every single moment."
+          }
+        ],
+        "aggregateRating": {
+          "@type": "AggregateRating",
+          "ratingValue": "5",
+          "reviewCount": "3",
+          "bestRating": "5",
+          "worstRating": "5"
+        }
+      }
     ]
   }
   </script>
@@ -279,6 +338,29 @@
     }
 
     /* ============================================================
+       GOLD ACCENT ELEMENTS — Fix 8
+    ============================================================ */
+    .section-divider {
+      display: block;
+      width: 48px;
+      height: 1px;
+      background: var(--color-gold);
+      margin: 16px auto 20px;
+    }
+
+    .contact-form-wrap .section-divider {
+      margin: 16px 0 20px;
+    }
+
+    .hero-divider {
+      display: block;
+      width: 32px;
+      height: 1px;
+      background: var(--color-gold);
+      margin: 0 auto 32px;
+    }
+
+    /* ============================================================
        FADE-IN ANIMATION (Intersection Observer)
     ============================================================ */
     .fade-in {
@@ -382,10 +464,8 @@
       color: var(--color-gold);
     }
 
-    .nav.scrolled .nav-links a:hover,
-    .nav.scrolled .nav-links a.active {
-      color: var(--color-emerald);
-    }
+    .nav.scrolled .nav-links a:hover { color: var(--color-emerald); }
+    .nav.scrolled .nav-links a.active { color: var(--color-gold); }
 
     .nav-toggle {
       display: none;
@@ -512,7 +592,7 @@
 
     .hero-subheading {
       font-size: 1.05rem;
-      color: rgba(250, 247, 242, 0.82);
+      color: rgba(250, 247, 242, 0.92);
       max-width: 520px;
       margin: 0 auto 40px;
       font-weight: 300;
@@ -597,12 +677,26 @@
 
     .about-text .eyebrow {
       display: block;
-      margin-bottom: 12px;
+      font-size: 0.7rem;
+      letter-spacing: 0.22em;
+      margin-bottom: 16px;
     }
 
     .about-text h2 {
       color: var(--color-emerald);
-      margin-bottom: 28px;
+      font-size: clamp(2.6rem, 5vw, 4rem);
+      line-height: 1.05;
+      letter-spacing: -0.01em;
+      margin-bottom: 8px;
+    }
+
+    .about-lead {
+      font-family: var(--font-heading);
+      font-style: italic;
+      font-size: 1.12rem;
+      color: var(--color-charcoal);
+      line-height: 1.9;
+      margin-bottom: 20px;
     }
 
     .about-text p {
@@ -635,7 +729,7 @@
     .stat-value {
       font-family: var(--font-heading);
       font-size: 2.2rem;
-      color: var(--color-emerald);
+      color: var(--color-gold);
       font-weight: 400;
       display: block;
       line-height: 1;
@@ -658,9 +752,42 @@
       background: var(--color-emerald);
     }
 
-    .services .section-header h2 { color: var(--color-ivory); }
-    .services .section-header .eyebrow { color: var(--color-gold-light); }
-    .services .section-subheading { color: rgba(250, 247, 242, 0.88); }
+    .services-header {
+      display: flex;
+      align-items: flex-end;
+      justify-content: space-between;
+      gap: 48px;
+      max-width: var(--max-width);
+      margin: 0 auto 56px;
+    }
+
+    .services-header-left { flex-shrink: 0; }
+
+    .services-header-left h2 {
+      color: var(--color-ivory);
+      font-size: clamp(2.4rem, 4vw, 3.6rem);
+      line-height: 1.05;
+      margin-bottom: 0;
+    }
+
+    .services-header-left .eyebrow {
+      color: var(--color-gold-light);
+      margin-bottom: 12px;
+      display: block;
+    }
+
+    .services-header-right {
+      max-width: 360px;
+      padding-bottom: 4px;
+    }
+
+    .services-intro {
+      color: rgba(250, 247, 242, 0.75);
+      line-height: 1.8;
+      font-style: italic;
+      font-family: var(--font-heading);
+      font-size: 1.2rem;
+    }
 
     .services-grid {
       display: grid;
@@ -749,6 +876,7 @@
 
     .gallery-placeholder {
       width: 100%;
+      display: block;
       background-color: #1B4332;
       background-size: cover;
       background-position: center;
@@ -815,6 +943,17 @@
     .faq {
       padding: var(--section-padding);
       background: var(--color-ivory);
+    }
+
+    .faq-intro {
+      font-family: var(--font-heading);
+      font-style: italic;
+      font-size: clamp(1.2rem, 2.5vw, 1.55rem);
+      color: var(--color-taupe);
+      text-align: center;
+      max-width: 600px;
+      margin: -28px auto 52px;
+      line-height: 1.6;
     }
 
     .faq-list {
@@ -930,7 +1069,9 @@
     .testimonial-quote {
       font-family: var(--font-heading);
       font-style: italic;
-      font-size: 1.15rem;
+      font-weight: 300;
+      font-size: clamp(1.05rem, 1.8vw, 1.2rem);
+      letter-spacing: 0.01em;
       color: var(--color-ivory);
       line-height: 1.7;
       margin-bottom: 24px;
@@ -955,7 +1096,63 @@
     ============================================================ */
     .contact {
       padding: var(--section-padding);
-      background: var(--color-off-white);
+      background: var(--color-emerald);
+    }
+
+    /* ---- Contact: scoped overrides for dark background ---- */
+    .contact h3 { color: var(--color-ivory); }
+    .contact-info-tagline { color: rgba(250, 247, 242, 0.65); }
+    .contact .eyebrow { color: var(--color-gold-light); }
+    .contact .section-header h2 { color: var(--color-ivory); }
+    .contact-detail-label { color: rgba(250, 247, 242, 0.55); }
+    .contact-detail-value { color: var(--color-ivory); }
+    .contact-detail-value a { color: var(--color-ivory); }
+    .contact-detail-value a:hover { color: var(--color-gold-light); }
+    .contact-detail-icon { background: rgba(250, 247, 242, 0.1); color: var(--color-gold-light); }
+    .contact-response-note {
+      background: rgba(250, 247, 242, 0.07);
+      border-left-color: var(--color-gold);
+      color: rgba(250, 247, 242, 0.75);
+    }
+
+    /* ---- Contact: form fields on dark background ---- */
+    .contact .form-group label { color: rgba(250, 247, 242, 0.7); }
+    .contact .form-group input,
+    .contact .form-group select,
+    .contact .form-group textarea {
+      background: rgba(250, 247, 242, 0.08);
+      border-color: rgba(250, 247, 242, 0.2);
+      color: var(--color-ivory);
+    }
+    .contact .form-group input::placeholder,
+    .contact .form-group textarea::placeholder { color: rgba(250, 247, 242, 0.4); }
+    .contact .form-group select option {
+      background: var(--color-emerald);
+      color: var(--color-ivory);
+    }
+    .contact .form-group input:focus,
+    .contact .form-group select:focus,
+    .contact .form-group textarea:focus {
+      border-color: var(--color-gold);
+      box-shadow: 0 0 0 3px rgba(201, 168, 76, 0.15);
+      background: rgba(250, 247, 242, 0.12);
+    }
+    .form-success {
+      background: rgba(250, 247, 242, 0.1);
+      border-color: rgba(201, 168, 76, 0.4);
+      color: var(--color-ivory);
+    }
+
+    /* ---- Contact: submit button — gold on dark bg ---- */
+    .contact .btn-primary {
+      background: var(--color-gold);
+      border-color: var(--color-gold);
+      color: var(--color-charcoal);
+    }
+    .contact .btn-primary:hover {
+      background: var(--color-gold-light);
+      border-color: var(--color-gold-light);
+      color: var(--color-charcoal);
     }
 
     .contact-grid {
@@ -973,7 +1170,7 @@
     }
 
     .contact-form-wrap .section-header h2 {
-      color: var(--color-emerald);
+      color: var(--color-ivory);
     }
 
     .contact-form {
@@ -1145,15 +1342,16 @@
     .footer-brand .footer-logo {
       font-family: var(--font-heading);
       font-size: 1.8rem;
-      color: var(--color-ivory);
+      color: var(--color-gold-light);
       display: block;
       margin-bottom: 10px;
     }
 
     .footer-tagline {
-      font-size: 0.85rem;
-      color: rgba(250, 247, 242, 0.5);
+      font-family: var(--font-heading);
       font-style: italic;
+      font-size: 1rem;
+      color: rgba(250, 247, 242, 0.55);
     }
 
     .footer-nav {
@@ -1227,6 +1425,21 @@
       :root { --section-padding: 80px 24px; }
 
       .about-grid { gap: 48px; }
+      .about-image-wrap { overflow: visible; }
+      .about-image-accent {
+        width: 120px;
+        height: 120px;
+        bottom: -12px;
+        right: -12px;
+      }
+
+      .services-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 20px;
+        margin-bottom: 40px;
+      }
+      .services-header-right { max-width: 100%; }
 
       .services-grid { grid-template-columns: 1fr 1fr; }
 
@@ -1281,13 +1494,42 @@
       .gallery-item.ar-1 .gallery-placeholder,
       .gallery-item.ar-2 .gallery-placeholder { aspect-ratio: 4/3; }
 
-      .testimonials-grid {
-        grid-template-columns: 1fr;
-        overflow-x: auto;
-        display: flex;
-        padding-bottom: 16px;
+      .testimonials-grid { grid-template-columns: 1fr; }
+      .testimonial-card { min-width: unset; }
+      .testimonial-quote {
+        display: -webkit-box;
+        -webkit-line-clamp: 4;
+        line-clamp: 4;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
       }
-      .testimonial-card { min-width: 280px; }
+      .testimonial-card.expanded .testimonial-quote {
+        display: block;
+        overflow: visible;
+        -webkit-line-clamp: unset;
+        line-clamp: unset;
+      }
+      .testimonial-expand-btn {
+        display: block;
+        margin-top: 10px;
+        font-size: 0.75rem;
+        font-weight: 700;
+        letter-spacing: 0.1em;
+        text-transform: uppercase;
+        color: var(--color-gold-light);
+        background: none;
+        border: none;
+        padding: 0;
+        cursor: pointer;
+      }
+
+      /* Fix 15: always-visible captions on touch devices */
+      .gallery-overlay {
+        opacity: 1;
+        background: linear-gradient(to top, rgba(27, 67, 50, 0.75) 0%, transparent 45%);
+      }
+      .gallery-caption { font-size: 0.78rem; }
+      .gallery-item:hover .gallery-placeholder { transform: none; }
 
       .form-row { grid-template-columns: 1fr; }
 
@@ -1691,7 +1933,7 @@
         eyebrow: 'Las Vegas Bridal Makeup Artist',
         heading: 'Your Wedding Day Begins Here',
         subheading: 'Effortless, editorial bridal beauty crafted for the woman who wants to feel completely herself — only more luminous, more confident, and entirely unforgettable.',
-        imageUrl: './images/hero.svg'
+        imageUrl: './images/hero.jpg'
       },
       about: {
         heading: 'Meet the Artist',
@@ -1701,7 +1943,7 @@
         stat1Value: '200+', stat1Label: 'Brides',
         stat2Value: '10',   stat2Label: 'Years Experience',
         stat3Value: '✈',    stat3Label: 'Destination Ready',
-        imageUrl: './images/artist.svg'
+        imageUrl: './images/pexels-rebornfilmes-28861519.jpg'
       },
       services: [
         { title: 'Bridal Glam',    desc: 'Your complete wedding-day makeup experience — a full artistry application designed for longevity, photography, and the quiet confidence of knowing you look exactly right. Includes a pre-service consultation and touch-up kit.' },
@@ -1709,15 +1951,15 @@
         { title: 'Trial Session',  desc: 'A dedicated session to preview and perfect your wedding-day look before the big day — testing products for longevity on your skin, refining details, and ensuring you feel completely confident and ready.' }
       ],
       gallery: [
-        { url: './images/gallery-01.svg', caption: 'Soft bridal glam — Garden ceremony',        alt: 'Bridal makeup look — soft glam for garden ceremony' },
-        { url: './images/gallery-02.svg', caption: 'Timeless elegance — Ballroom wedding',       alt: 'Timeless bridal makeup for ballroom wedding' },
-        { url: './images/gallery-03.svg', caption: 'Golden hour bride',                          alt: 'Bridal makeup photographed in golden hour light' },
-        { url: './images/gallery-04.svg', caption: 'Editorial bridal — Las Vegas',               alt: 'Editorial bridal makeup look in Las Vegas' },
-        { url: './images/gallery-05.svg', caption: 'Bridal party — Spring wedding',              alt: 'Bridal party makeup for spring wedding' },
-        { url: './images/gallery-06.svg', caption: 'Natural glow — Outdoor ceremony',            alt: 'Natural glow bridal makeup for outdoor ceremony' },
-        { url: './images/gallery-07.svg', caption: 'Romantic smoky eye — Evening reception',     alt: 'Romantic smoky eye bridal makeup for evening reception' },
-        { url: './images/gallery-08.svg', caption: 'Classic red lip — City hall wedding',        alt: 'Classic red lip bridal makeup look' },
-        { url: './images/gallery-09.svg', caption: 'Desert destination — Arizona',              alt: 'Bridal makeup for desert destination wedding in Arizona' }
+        { url: './images/istockphoto-528908438-1024x1024.jpg',   caption: 'Soft bridal glam — Garden ceremony',        alt: 'Bridal makeup look — soft glam for garden ceremony' },
+        { url: './images/istockphoto-1296431297-1024x1024.jpg',  caption: 'Timeless elegance — Ballroom wedding',       alt: 'Timeless bridal makeup for ballroom wedding' },
+        { url: './images/istockphoto-1314528208-1024x1024.jpg',  caption: 'Golden hour bride',                          alt: 'Bridal makeup photographed in golden hour light' },
+        { url: './images/istockphoto-1340302535-1024x1024.jpg',  caption: 'Editorial bridal — Las Vegas',               alt: 'Editorial bridal makeup look in Las Vegas' },
+        { url: './images/istockphoto-540984850-1024x1024.jpg',   caption: 'Bridal party — Spring wedding',              alt: 'Bridal party makeup for spring wedding' },
+        { url: './images/istockphoto-621835636-1024x1024.jpg',   caption: 'Natural glow — Outdoor ceremony',            alt: 'Natural glow bridal makeup for outdoor ceremony' },
+        { url: './images/pexels-rebornfilmes-28861519.jpg',      caption: 'Romantic smoky eye — Evening reception',     alt: 'Romantic smoky eye bridal makeup for evening reception' },
+        { url: './images/istockphoto-528908438-1024x1024.jpg',   caption: 'Classic red lip — City hall wedding',        alt: 'Classic red lip bridal makeup look' },
+        { url: './images/istockphoto-1296431297-1024x1024.jpg',  caption: 'Desert destination — Arizona',              alt: 'Bridal makeup for desert destination wedding in Arizona' }
       ],
       faqs: [
         { q: 'Do you travel for destination weddings?',      a: 'Absolutely. I\'m based in Las Vegas and available for destination weddings nationwide and internationally. Travel fees apply and are quoted per event.' },
@@ -1813,6 +2055,10 @@
 
     // ============================================================
     // RENDER — GALLERY
+    // NOTE: Gallery uses CSS background-image for object-fit cover behavior.
+    // When migrating to a real backend, switch to <img> tags with loading="lazy"
+    // and srcset for responsive image delivery via CloudFront.
+    //
     // Flex-column masonry: cross-browser, avoids CSS columns Safari bug.
     // Columns: 3 on desktop (≥769px), 2 on tablet (481–768px), 1 on mobile.
     // ============================================================
