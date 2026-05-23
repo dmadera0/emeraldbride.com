@@ -2009,8 +2009,10 @@
       if (heading)  heading.textContent  = d.heading;
       if (sub)      sub.textContent      = d.subheading;
       const heroEl = document.querySelector('.hero');
-      if (d.imageUrl && heroEl) {
-        heroEl.style.backgroundImage    = `url(${d.imageUrl})`;
+      // Fall back to DEFAULTS if stored value is an empty string (stale admin save)
+      const imageUrl = d.imageUrl || DEFAULTS.hero.imageUrl;
+      if (imageUrl && heroEl) {
+        heroEl.style.backgroundImage    = `url(${imageUrl})`;
         heroEl.style.backgroundSize     = 'cover';
         heroEl.style.backgroundPosition = 'center top';
       }
@@ -2033,8 +2035,10 @@
       set('stat-3-value',   d.stat3Value);
       set('stat-3-label',   d.stat3Label);
       const aboutImg = document.querySelector('.about-image');
-      if (d.imageUrl && aboutImg) {
-        aboutImg.style.backgroundImage    = `url(${d.imageUrl})`;
+      // Fall back to DEFAULTS if stored value is an empty string (stale admin save)
+      const aboutImageUrl = d.imageUrl || DEFAULTS.about.imageUrl;
+      if (aboutImageUrl && aboutImg) {
+        aboutImg.style.backgroundImage    = `url(${aboutImageUrl})`;
         aboutImg.style.backgroundSize     = 'cover';
         aboutImg.style.backgroundPosition = 'center';
       }
@@ -2073,7 +2077,14 @@
     }
 
     function renderGallery() {
-      const items  = getData('gallery', DEFAULTS.gallery);
+      const stored = getData('gallery', null);
+      // If stored data exists but has empty URLs (stale admin save), fill from DEFAULTS
+      const items = stored
+        ? stored.map((item, i) => ({
+            ...item,
+            url: item.url || (DEFAULTS.gallery[i] ? DEFAULTS.gallery[i].url : '')
+          }))
+        : DEFAULTS.gallery;
       const grid   = document.getElementById('gallery-grid');
       if (!grid) return;
 
