@@ -1,0 +1,37 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1920 1080" width="1920" height="1080">
+  <defs>
+    <linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#0d2218"/>
+      <stop offset="40%" stop-color="#1B4332"/>
+      <stop offset="70%" stop-color="#2D6A4F"/>
+      <stop offset="100%" stop-color="#0d2b1e"/>
+    </linearGradient>
+    <radialGradient id="glow" cx="50%" cy="48%" r="42%">
+      <stop offset="0%" stop-color="#C9A84C" stop-opacity="0.07"/>
+      <stop offset="100%" stop-color="#C9A84C" stop-opacity="0"/>
+    </radialGradient>
+  </defs>
+
+  <rect width="1920" height="1080" fill="url(#bg)"/>
+  <rect width="1920" height="1080" fill="url(#glow)"/>
+
+  <!-- Corner brackets -->
+  <g stroke="#C9A84C" stroke-width="2" fill="none" opacity="0.45">
+    <polyline points="52,104 52,52 104,52"/>
+    <polyline points="1816,52 1868,52 1868,104"/>
+    <polyline points="52,976 52,1028 104,1028"/>
+    <polyline points="1816,1028 1868,1028 1868,976"/>
+  </g>
+
+  <!-- Camera icon -->
+  <g transform="translate(960,460)" stroke="#C9A84C" fill="none" opacity="0.4">
+    <rect x="-64" y="-36" width="128" height="88" rx="10" stroke-width="2.5"/>
+    <circle cx="0" cy="12" r="28" stroke-width="2"/>
+    <rect x="-18" y="-46" width="36" height="14" rx="5" stroke-width="2"/>
+    <circle cx="46" cy="-22" r="5" fill="#C9A84C" stroke="none" opacity="0.6"/>
+  </g>
+
+  <text x="960" y="610" text-anchor="middle" font-family="Georgia,'Times New Roman',serif" font-size="58" font-style="italic" fill="#FAF7F2" opacity="0.75" letter-spacing="2">Emerald Bride</text>
+  <text x="960" y="672" text-anchor="middle" font-family="Arial,Helvetica,sans-serif" font-size="22" fill="#C9A84C" opacity="0.8" letter-spacing="6">HERO IMAGE · 1920 × 1080px</text>
+  <text x="960" y="712" text-anchor="middle" font-family="Arial,Helvetica,sans-serif" font-size="16" fill="#FAF7F2" opacity="0.28" letter-spacing="2">Replace with ./images/hero.jpg</text>
+</svg>

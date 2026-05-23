@@ -365,6 +365,12 @@
       box-shadow: 0 0 0 3px rgba(27, 67, 50, 0.07);
     }
 
+    button:focus-visible {
+      outline: 2px solid var(--color-gold);
+      outline-offset: 2px;
+      border-radius: var(--radius-sm);
+    }
+
     .field-textarea {
       resize: vertical;
       min-height: 90px;
@@ -818,6 +824,22 @@
       min-height: 120px;
     }
 
+    /* ---- DIRTY STATE INDICATOR ---- */
+    .dirty-indicator {
+      display: block;
+      font-size: 0.65rem;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--color-gold-light);
+      margin-top: 6px;
+      min-height: 14px;
+      opacity: 0;
+      transition: opacity 0.2s ease;
+    }
+
+    .dirty-indicator.visible { opacity: 1; }
+
     .gallery-dz .dz-icon { width: 26px; height: 26px; }
     .gallery-dz .dz-text { font-size: 0.8rem; }
     .gallery-dz .dz-ideal-size { font-size: 0.64rem; letter-spacing: 0.07em; }
@@ -929,6 +951,7 @@
       <div class="sidebar-header">
         <span class="sidebar-logo">Emerald Bride</span>
         <span class="sidebar-role">Admin Panel</span>
+        <span class="dirty-indicator" id="dirty-indicator" aria-live="polite"></span>
       </div>
 
       <nav class="sidebar-nav" id="sidebar-nav">
@@ -1398,15 +1421,37 @@
     }
 
     // ============================================================
+    // DIRTY STATE TRACKING
+    // ============================================================
+    let isDirty = false;
+
+    function markDirty() {
+      isDirty = true;
+      const ind = document.getElementById('dirty-indicator');
+      if (ind) { ind.textContent = '● Unsaved changes'; ind.classList.add('visible'); }
+    }
+
+    function clearDirty() {
+      isDirty = false;
+      const ind = document.getElementById('dirty-indicator');
+      if (ind) { ind.textContent = ''; ind.classList.remove('visible'); }
+    }
+
+    // ============================================================
     // PANEL NAVIGATION
     // ============================================================
     function showPanel(id) {
+      if (isDirty) {
+        const confirmed = confirm('You have unsaved changes. Leave without saving?');
+        if (!confirmed) return;
+      }
       document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
       document.querySelectorAll('.sidebar-nav-item').forEach(n => n.classList.remove('active'));
       const panel = document.getElementById('panel-' + id);
       if (panel) panel.classList.add('active');
       const nav = document.querySelector(`[data-panel="${id}"]`);
       if (nav) nav.classList.add('active');
+      clearDirty();
     }
 
     document.getElementById('sidebar-nav').addEventListener('click', e => {
@@ -1563,6 +1608,7 @@
         subheading: document.getElementById('h-subheading').value.trim(),
         imageUrl:  document.getElementById('h-image').value.trim()
       });
+      clearDirty();
     }
 
     // ============================================================
@@ -1589,6 +1635,7 @@
         stat3Value: get('a-s3v'), stat3Label: get('a-s3l'),
         imageUrl: get('a-image')
       });
+      clearDirty();
     }
 
     // ============================================================
@@ -1618,6 +1665,7 @@
         desc:  document.getElementById(`svc-desc-${i}`).value.trim()
       }));
       setData('services', saved);
+      clearDirty();
     }
 
     // ============================================================
@@ -1827,6 +1875,7 @@
 
     function saveGallery() {
       setData('gallery', collectGalleryState());
+      clearDirty();
     }
 
     // ============================================================
@@ -1918,6 +1967,7 @@
 
     function saveFAQs() {
       setData('faqs', collectFAQState());
+      clearDirty();
     }
 
     // ============================================================
@@ -1954,6 +2004,7 @@
         date:  document.getElementById(`test-date-${i}`).value.trim()
       }));
       setData('testimonials', saved);
+      clearDirty();
     }
 
     // ============================================================
@@ -1978,6 +2029,7 @@
         tagline:      get('ci-tagline'),
         responseNote: get('ci-response-note')
       });
+      clearDirty();
     }
 
     // ============================================================
@@ -2005,6 +2057,9 @@
       loadTestimonials();
       loadContact();
       updateDashStats();
+
+      // Wire dirty-state tracking to all editable fields via delegation
+      document.getElementById('admin-main').addEventListener('input', markDirty);
     }
 
     checkAuth();

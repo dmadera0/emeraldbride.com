@@ -56,78 +56,10 @@
           "https://www.instagram.com/emeraldbride"
         ]
       },
-      {
-        "@type": "FAQPage",
-        "mainEntity": [
-          {
-            "@type": "Question",
-            "name": "Do you travel for destination weddings?",
-            "acceptedAnswer": {
-              "@type": "Answer",
-              "text": "Absolutely. I'm based in Las Vegas and available for destination weddings nationwide and internationally. Travel fees apply and are quoted per event."
-            }
-          },
-          {
-            "@type": "Question",
-            "name": "How far in advance should I book?",
-            "acceptedAnswer": {
-              "@type": "Answer",
-              "text": "For peak wedding season (April–October), I recommend booking 9–12 months in advance. Off-season dates may be available with shorter notice, but early booking ensures your date is secured."
-            }
-          },
-          {
-            "@type": "Question",
-            "name": "Is a trial session required?",
-            "acceptedAnswer": {
-              "@type": "Answer",
-              "text": "A trial is not required but is strongly encouraged. It's the best way to perfect your look before the big day, giving us time to refine details, test longevity, and ensure you feel confident."
-            }
-          },
-          {
-            "@type": "Question",
-            "name": "How long does bridal makeup take on the wedding day?",
-            "acceptedAnswer": {
-              "@type": "Answer",
-              "text": "Bridal application takes approximately 75–90 minutes. Bridesmaids and additional party members take 45–60 minutes each. I'll provide a detailed timeline once your party size is confirmed."
-            }
-          },
-          {
-            "@type": "Question",
-            "name": "What products do you use?",
-            "acceptedAnswer": {
-              "@type": "Answer",
-              "text": "I work with professional-grade, long-wear brands including Charlotte Tilbury, NARS, Hourglass, Laura Mercier, and MAC — selected for their performance, longevity, and how beautifully they photograph."
-            }
-          },
-          {
-            "@type": "Question",
-            "name": "Do you accommodate all skin tones and types?",
-            "acceptedAnswer": {
-              "@type": "Answer",
-              "text": "Yes, always. My kit includes an extensive shade range to complement every complexion. I'm also experienced working with sensitive skin, rosacea, mature skin, and other skin concerns."
-            }
-          },
-          {
-            "@type": "Question",
-            "name": "What is your cancellation policy?",
-            "acceptedAnswer": {
-              "@type": "Answer",
-              "text": "A non-refundable retainer of 30% is required to hold your date. Cancellations made within 60 days of the event may forfeit the full booking amount. Full details are outlined in the service agreement."
-            }
-          },
-          {
-            "@type": "Question",
-            "name": "Do you offer airbrush makeup?",
-            "acceptedAnswer": {
-              "@type": "Answer",
-              "text": "Yes. Airbrush application is available and is particularly popular for its flawless, camera-ready finish and exceptional longevity. It can be requested when booking or discussed at your trial."
-            }
-          }
-        ]
-      }
     ]
   }
   </script>
+  <!-- FAQPage schema is generated dynamically by generateFAQSchema() after renderFAQs() -->
 
   <style>
     /* ============================================================
@@ -203,6 +135,42 @@
     }
 
     /* ============================================================
+       FOCUS STATES — WCAG 2.1 AA
+    ============================================================ */
+    .faq-trigger:focus-visible {
+      outline: 2px solid var(--color-gold);
+      outline-offset: 2px;
+      border-radius: var(--radius-sm);
+    }
+
+    .nav-links a:focus-visible {
+      outline: 2px solid var(--color-gold);
+      outline-offset: 4px;
+      border-radius: 2px;
+    }
+
+    .nav-toggle:focus-visible {
+      outline: 2px solid var(--color-gold);
+      outline-offset: 4px;
+      border-radius: var(--radius-sm);
+    }
+
+    .btn:focus-visible {
+      outline: 2px solid var(--color-gold);
+      outline-offset: 3px;
+    }
+
+    .footer-social-link:focus-visible {
+      outline: 2px solid var(--color-gold);
+      outline-offset: 3px;
+    }
+
+    .gallery-item:focus-visible {
+      outline: 2px solid var(--color-gold);
+      outline-offset: 2px;
+    }
+
+    /* ============================================================
        TYPOGRAPHY UTILITIES
     ============================================================ */
     .eyebrow {
@@ -220,7 +188,7 @@
       line-height: 1.15;
     }
 
-    h1 { font-size: clamp(2.8rem, 6vw, 5rem); }
+    h1 { font-size: clamp(2.2rem, 6vw, 5rem); }
     h2 { font-size: clamp(2rem, 4vw, 3.2rem); }
     h3 { font-size: clamp(1.3rem, 2.5vw, 1.7rem); }
 
@@ -467,6 +435,24 @@
     .nav-mobile a:last-child { border-bottom: none; }
     .nav-mobile a:hover { color: var(--color-emerald); }
 
+    .nav-mobile-cta {
+      display: block;
+      margin-top: 16px;
+      padding: 14px 24px;
+      background: var(--color-emerald);
+      color: var(--color-ivory) !important;
+      font-size: 0.82rem;
+      font-weight: 700;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      text-align: center;
+      border-radius: var(--radius-sm);
+      border-bottom: none !important;
+      transition: background var(--transition-base);
+    }
+
+    .nav-mobile-cta:hover { background: var(--color-emerald-light) !important; color: var(--color-ivory) !important; }
+
     /* ============================================================
        HERO
     ============================================================ */
@@ -480,16 +466,9 @@
       position: relative;
       overflow: hidden;
       padding: 120px 24px 80px;
-
-      /* REPLACE: hero image — set background-image to your hero photo URL */
-      background: linear-gradient(
-        160deg,
-        #0d2b1e 0%,
-        #1B4332 35%,
-        #2D6A4F 60%,
-        #1a3d2e 80%,
-        #0d2218 100%
-      );
+      background-color: #1B4332;
+      background-size: cover;
+      background-position: center top;
     }
 
     .hero::before {
@@ -498,6 +477,17 @@
       inset: 0;
       background: radial-gradient(ellipse at 60% 40%, rgba(201, 168, 76, 0.08) 0%, transparent 60%);
       pointer-events: none;
+      z-index: 1;
+    }
+
+    /* Dark overlay so hero text stays readable over any photo */
+    .hero::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.38);
+      pointer-events: none;
+      z-index: 1;
     }
 
     .hero-content {
@@ -589,15 +579,9 @@
       aspect-ratio: 3/4;
       border-radius: var(--radius-lg);
       overflow: hidden;
-
-      /* REPLACE: about image — set background-image to artist photo URL */
-      background: linear-gradient(
-        145deg,
-        #1B4332 0%,
-        #2D6A4F 40%,
-        #3d8b65 70%,
-        #1B4332 100%
-      );
+      background-color: #1B4332;
+      background-size: cover;
+      background-position: center;
     }
 
     .about-image-accent {
@@ -676,7 +660,7 @@
 
     .services .section-header h2 { color: var(--color-ivory); }
     .services .section-header .eyebrow { color: var(--color-gold-light); }
-    .services .section-subheading { color: rgba(250, 247, 242, 0.7); }
+    .services .section-subheading { color: rgba(250, 247, 242, 0.88); }
 
     .services-grid {
       display: grid;
@@ -715,7 +699,7 @@
     }
 
     .service-card p {
-      color: rgba(250, 247, 242, 0.72);
+      color: rgba(250, 247, 242, 0.88);
       font-size: 0.95rem;
       line-height: 1.8;
     }
@@ -736,52 +720,47 @@
       background: var(--color-off-white);
     }
 
+    /* Flex-column masonry — cross-browser, no CSS columns Safari bug */
     .gallery-grid {
-      columns: 3;
-      column-gap: 16px;
+      display: flex;
+      gap: 16px;
       max-width: var(--max-width);
       margin: 0 auto 48px;
     }
 
+    .gallery-col {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      flex: 1;
+    }
+
     .gallery-item {
-      break-inside: avoid;
-      margin-bottom: 16px;
       position: relative;
       overflow: hidden;
       border-radius: var(--radius-sm);
-      cursor: pointer;
+      cursor: default;
     }
 
-    .gallery-item:nth-child(3n+1) .gallery-placeholder { height: 320px; }
-    .gallery-item:nth-child(3n+2) .gallery-placeholder { height: 240px; }
-    .gallery-item:nth-child(3n+3) .gallery-placeholder { height: 280px; }
-    .gallery-item:nth-child(3n+4) .gallery-placeholder { height: 260px; }
-    .gallery-item:nth-child(3n+5) .gallery-placeholder { height: 300px; }
-    .gallery-item:nth-child(3n+6) .gallery-placeholder { height: 220px; }
-    .gallery-item:nth-child(3n+7) .gallery-placeholder { height: 340px; }
-    .gallery-item:nth-child(3n+8) .gallery-placeholder { height: 250px; }
-    .gallery-item:nth-child(3n+9) .gallery-placeholder { height: 290px; }
+    /* Alternating aspect ratios within each column (by item position mod 3) */
+    .gallery-item.ar-0 .gallery-placeholder { aspect-ratio: 3/4; }
+    .gallery-item.ar-1 .gallery-placeholder { aspect-ratio: 4/5; }
+    .gallery-item.ar-2 .gallery-placeholder { aspect-ratio: 2/3; }
 
     .gallery-placeholder {
       width: 100%;
+      background-color: #1B4332;
+      background-size: cover;
+      background-position: center;
       transition: transform 0.5s ease;
-
-      /* REPLACE: gallery placeholder — each will be replaced by background-image: url() */
-      background: linear-gradient(145deg, #1B4332, #2D6A4F 50%, #3d8b65);
     }
 
-    .gallery-placeholder.alt-1 {
-      background: linear-gradient(145deg, #2c4a3a, #3d6b52, #1B4332);
-    }
-    .gallery-placeholder.alt-2 {
-      background: linear-gradient(145deg, #1a3d2c, #2D6A4F, #4a9070);
-    }
-    .gallery-placeholder.alt-3 {
-      background: linear-gradient(145deg, #0d2b1e, #1B4332, #2D6A4F);
-    }
-    .gallery-placeholder.alt-4 {
-      background: linear-gradient(145deg, #3d5a45, #2D6A4F, #1B4332);
-    }
+    /* Fallback gradients when no image URL is set */
+    .gallery-placeholder.alt-0 { background-color: #1B4332; background-image: linear-gradient(145deg, #1B4332, #2D6A4F 50%, #3d8b65); }
+    .gallery-placeholder.alt-1 { background-color: #2c4a3a; background-image: linear-gradient(145deg, #2c4a3a, #3d6b52, #1B4332); }
+    .gallery-placeholder.alt-2 { background-color: #1a3d2c; background-image: linear-gradient(145deg, #1a3d2c, #2D6A4F, #4a9070); }
+    .gallery-placeholder.alt-3 { background-color: #0d2b1e; background-image: linear-gradient(145deg, #0d2b1e, #1B4332, #2D6A4F); }
+    .gallery-placeholder.alt-4 { background-color: #3d5a45; background-image: linear-gradient(145deg, #3d5a45, #2D6A4F, #1B4332); }
 
     .gallery-overlay {
       position: absolute;
@@ -967,7 +946,7 @@
 
     .testimonial-date {
       font-size: 0.78rem;
-      color: rgba(250, 247, 242, 0.45);
+      color: rgba(250, 247, 242, 0.72);
       margin-top: 4px;
     }
 
@@ -1232,12 +1211,12 @@
 
     .footer-copyright {
       font-size: 0.78rem;
-      color: rgba(250, 247, 242, 0.35);
+      color: rgba(250, 247, 242, 0.55);
     }
 
     .footer-location {
       font-size: 0.78rem;
-      color: rgba(250, 247, 242, 0.35);
+      color: rgba(250, 247, 242, 0.55);
       text-align: right;
     }
 
@@ -1251,7 +1230,7 @@
 
       .services-grid { grid-template-columns: 1fr 1fr; }
 
-      .gallery-grid { columns: 2; }
+      /* tablet: 2-column gallery handled in renderGallery() via JS resize */
 
       .testimonials-grid { grid-template-columns: 1fr 1fr; }
 
@@ -1296,7 +1275,11 @@
 
       .services-grid { grid-template-columns: 1fr; }
 
-      .gallery-grid { columns: 1; }
+      /* single-column gallery on mobile */
+      .gallery-grid { flex-direction: column; }
+      .gallery-item.ar-0 .gallery-placeholder,
+      .gallery-item.ar-1 .gallery-placeholder,
+      .gallery-item.ar-2 .gallery-placeholder { aspect-ratio: 4/3; }
 
       .testimonials-grid {
         grid-template-columns: 1fr;
@@ -1347,6 +1330,7 @@
       <a href="#gallery">Gallery</a>
       <a href="#faq">FAQ</a>
       <a href="#contact">Contact</a>
+      <a href="#contact" class="nav-mobile-cta">Book a Consultation</a>
     </nav>
   </nav>
 
@@ -1543,6 +1527,8 @@
           </div>
 
           <form class="contact-form" id="contact-form" novalidate aria-label="Contact form">
+            <input type="hidden" name="_subject" value="New Booking Inquiry — Emerald Bride" />
+            <input type="hidden" name="_replyto" value="" /><!-- auto-populated by Formspree from email field -->
             <div class="form-row">
               <div class="form-group">
                 <label for="field-name">Full Name</label>
@@ -1705,7 +1691,7 @@
         eyebrow: 'Las Vegas Bridal Makeup Artist',
         heading: 'Your Wedding Day Begins Here',
         subheading: 'Effortless, editorial bridal beauty crafted for the woman who wants to feel completely herself — only more luminous, more confident, and entirely unforgettable.',
-        imageUrl: ''
+        imageUrl: './images/hero.svg'
       },
       about: {
         heading: 'Meet the Artist',
@@ -1715,7 +1701,7 @@
         stat1Value: '200+', stat1Label: 'Brides',
         stat2Value: '10',   stat2Label: 'Years Experience',
         stat3Value: '✈',    stat3Label: 'Destination Ready',
-        imageUrl: ''
+        imageUrl: './images/artist.svg'
       },
       services: [
         { title: 'Bridal Glam',    desc: 'Your complete wedding-day makeup experience — a full artistry application designed for longevity, photography, and the quiet confidence of knowing you look exactly right. Includes a pre-service consultation and touch-up kit.' },
@@ -1723,15 +1709,15 @@
         { title: 'Trial Session',  desc: 'A dedicated session to preview and perfect your wedding-day look before the big day — testing products for longevity on your skin, refining details, and ensuring you feel completely confident and ready.' }
       ],
       gallery: [
-        { url: '', caption: 'Soft bridal glam — Garden ceremony',        alt: 'Bridal makeup look — soft glam for garden ceremony' },
-        { url: '', caption: 'Timeless elegance — Ballroom wedding',       alt: 'Timeless bridal makeup for ballroom wedding' },
-        { url: '', caption: 'Golden hour bride',                          alt: 'Bridal makeup photographed in golden hour light' },
-        { url: '', caption: 'Editorial bridal — Las Vegas',               alt: 'Editorial bridal makeup look in Las Vegas' },
-        { url: '', caption: 'Bridal party — Spring wedding',              alt: 'Bridal party makeup for spring wedding' },
-        { url: '', caption: 'Natural glow — Outdoor ceremony',            alt: 'Natural glow bridal makeup for outdoor ceremony' },
-        { url: '', caption: 'Romantic smoky eye — Evening reception',     alt: 'Romantic smoky eye bridal makeup for evening reception' },
-        { url: '', caption: 'Classic red lip — City hall wedding',        alt: 'Classic red lip bridal makeup look' },
-        { url: '', caption: 'Desert destination — Arizona',              alt: 'Bridal makeup for desert destination wedding in Arizona' }
+        { url: './images/gallery-01.svg', caption: 'Soft bridal glam — Garden ceremony',        alt: 'Bridal makeup look — soft glam for garden ceremony' },
+        { url: './images/gallery-02.svg', caption: 'Timeless elegance — Ballroom wedding',       alt: 'Timeless bridal makeup for ballroom wedding' },
+        { url: './images/gallery-03.svg', caption: 'Golden hour bride',                          alt: 'Bridal makeup photographed in golden hour light' },
+        { url: './images/gallery-04.svg', caption: 'Editorial bridal — Las Vegas',               alt: 'Editorial bridal makeup look in Las Vegas' },
+        { url: './images/gallery-05.svg', caption: 'Bridal party — Spring wedding',              alt: 'Bridal party makeup for spring wedding' },
+        { url: './images/gallery-06.svg', caption: 'Natural glow — Outdoor ceremony',            alt: 'Natural glow bridal makeup for outdoor ceremony' },
+        { url: './images/gallery-07.svg', caption: 'Romantic smoky eye — Evening reception',     alt: 'Romantic smoky eye bridal makeup for evening reception' },
+        { url: './images/gallery-08.svg', caption: 'Classic red lip — City hall wedding',        alt: 'Classic red lip bridal makeup look' },
+        { url: './images/gallery-09.svg', caption: 'Desert destination — Arizona',              alt: 'Bridal makeup for desert destination wedding in Arizona' }
       ],
       faqs: [
         { q: 'Do you travel for destination weddings?',      a: 'Absolutely. I\'m based in Las Vegas and available for destination weddings nationwide and internationally. Travel fees apply and are quoted per event.' },
@@ -1780,10 +1766,11 @@
       if (eyebrow) eyebrow.textContent = d.eyebrow;
       if (heading)  heading.textContent  = d.heading;
       if (sub)      sub.textContent      = d.subheading;
-      if (d.imageUrl) {
-        document.querySelector('.hero').style.backgroundImage = `url(${d.imageUrl})`;
-        document.querySelector('.hero').style.backgroundSize = 'cover';
-        document.querySelector('.hero').style.backgroundPosition = 'center';
+      const heroEl = document.querySelector('.hero');
+      if (d.imageUrl && heroEl) {
+        heroEl.style.backgroundImage    = `url(${d.imageUrl})`;
+        heroEl.style.backgroundSize     = 'cover';
+        heroEl.style.backgroundPosition = 'center top';
       }
     }
 
@@ -1803,13 +1790,11 @@
       set('stat-2-label',   d.stat2Label);
       set('stat-3-value',   d.stat3Value);
       set('stat-3-label',   d.stat3Label);
-      if (d.imageUrl) {
-        const img = document.querySelector('.about-image');
-        if (img) {
-          img.style.backgroundImage = `url(${d.imageUrl})`;
-          img.style.backgroundSize = 'cover';
-          img.style.backgroundPosition = 'center';
-        }
+      const aboutImg = document.querySelector('.about-image');
+      if (d.imageUrl && aboutImg) {
+        aboutImg.style.backgroundImage    = `url(${d.imageUrl})`;
+        aboutImg.style.backgroundSize     = 'cover';
+        aboutImg.style.backgroundPosition = 'center';
       }
     }
 
@@ -1828,28 +1813,57 @@
 
     // ============================================================
     // RENDER — GALLERY
+    // Flex-column masonry: cross-browser, avoids CSS columns Safari bug.
+    // Columns: 3 on desktop (≥769px), 2 on tablet (481–768px), 1 on mobile.
     // ============================================================
-    const GRADIENT_ALTS = ['', ' alt-1', ' alt-2', ' alt-3', ' alt-4', ' alt-1', ' alt-2', ' alt-3', ' alt-4'];
+    const GRADIENT_ALTS = ['alt-0', 'alt-1', 'alt-2', 'alt-3', 'alt-4', 'alt-0', 'alt-1', 'alt-2', 'alt-3'];
+    // aspect-ratio class cycles per item position within its column
+    const AR_CLASSES = ['ar-0', 'ar-1', 'ar-2'];
+
+    function getColumnCount() {
+      if (window.innerWidth >= 769) return 3;
+      if (window.innerWidth >= 481) return 2;
+      return 1;
+    }
 
     function renderGallery() {
       const items  = getData('gallery', DEFAULTS.gallery);
       const grid   = document.getElementById('gallery-grid');
       if (!grid) return;
-      grid.innerHTML = items.map((item, i) => {
-        const bg = item.url
-          ? `style="background-image:url(${item.url}); background-size:cover; background-position:center;"`
-          : '';
-        const cls = item.url ? '' : GRADIENT_ALTS[i % GRADIENT_ALTS.length];
-        return `
-          <div class="gallery-item fade-in" role="listitem" tabindex="0" aria-label="${item.alt || item.caption || 'Bridal gallery image'}">
-            <div class="gallery-placeholder${cls}" ${bg}></div>
+
+      const cols = getColumnCount();
+
+      // Build column arrays by distributing items left-to-right
+      const columns = Array.from({ length: cols }, () => []);
+      items.forEach((item, i) => columns[i % cols].push({ item, globalIdx: i }));
+
+      grid.innerHTML = columns.map(col => {
+        const itemsHtml = col.map(({ item, globalIdx }, posInCol) => {
+          const arClass = AR_CLASSES[posInCol % AR_CLASSES.length];
+          const gradCls = item.url ? '' : ` ${GRADIENT_ALTS[globalIdx % GRADIENT_ALTS.length]}`;
+          const bgStyle = item.url
+            ? `style="background-image:url(${item.url}); background-size:cover; background-position:center;"`
+            : '';
+          return `
+          <div class="gallery-item fade-in ${arClass}" role="img" aria-label="${item.alt || item.caption || 'Bridal gallery image'}">
+            <div class="gallery-placeholder${gradCls}" ${bgStyle}></div>
             <div class="gallery-overlay" aria-hidden="true">
               <span class="gallery-caption">${item.caption || ''}</span>
             </div>
           </div>`;
+        }).join('');
+        return `<div class="gallery-col">${itemsHtml}</div>`;
       }).join('');
+
       observeFadeIns();
     }
+
+    // Re-render gallery on resize so column count stays correct
+    let galleryResizeTimer;
+    window.addEventListener('resize', () => {
+      clearTimeout(galleryResizeTimer);
+      galleryResizeTimer = setTimeout(renderGallery, 120);
+    }, { passive: true });
 
     // ============================================================
     // RENDER — FAQS
@@ -2016,7 +2030,10 @@
       });
     });
 
-    form.addEventListener('submit', e => {
+    <!-- TODO: Replace FORMSPREE_ENDPOINT_ID with actual endpoint from formspree.io
+         Steps: 1. Go to formspree.io  2. Create free account  3. New Form → copy the ID
+         The ID looks like: xpzgkwqr  Full URL: https://formspree.io/f/xpzgkwqr -->
+    form.addEventListener('submit', async e => {
       e.preventDefault();
       let allValid = true;
       form.querySelectorAll('input, select, textarea').forEach(field => {
@@ -2024,10 +2041,55 @@
       });
       if (!allValid) return;
 
-      // TODO: Replace with POST /api/contact when backend is ready
-      form.style.display = 'none';
-      formSuccess.style.display = 'block';
+      const submitBtn = form.querySelector('[type="submit"]');
+      const originalText = submitBtn.textContent;
+      submitBtn.textContent = 'Sending...';
+      submitBtn.disabled = true;
+
+      try {
+        const formData = new FormData(form);
+        const response = await fetch('https://formspree.io/f/FORMSPREE_ENDPOINT_ID', {
+          method: 'POST',
+          body: formData,
+          headers: { 'Accept': 'application/json' }
+        });
+
+        if (response.ok) {
+          form.style.display = 'none';
+          formSuccess.style.display = 'block';
+        } else {
+          throw new Error('Server error');
+        }
+      } catch (err) {
+        submitBtn.textContent = originalText;
+        submitBtn.disabled = false;
+        const errMsg = form.querySelector('.form-submit-error') || document.createElement('p');
+        errMsg.className = 'form-submit-error';
+        errMsg.textContent = 'Something went wrong. Please email us directly at hello@emeraldbride.com';
+        errMsg.style.cssText = 'color:#c0392b; font-size:0.85rem; margin-top:12px;';
+        if (!form.querySelector('.form-submit-error')) form.appendChild(errMsg);
+      }
     });
+
+    // ============================================================
+    // FAQ SCHEMA — generated dynamically so it matches admin edits
+    // ============================================================
+    function generateFAQSchema() {
+      const faqs = getData('faqs', DEFAULTS.faqs);
+      const schema = {
+        '@context': 'https://schema.org',
+        '@type': 'FAQPage',
+        'mainEntity': faqs.map(f => ({
+          '@type': 'Question',
+          'name': f.q,
+          'acceptedAnswer': { '@type': 'Answer', 'text': f.a }
+        }))
+      };
+      const script = document.createElement('script');
+      script.type = 'application/ld+json';
+      script.textContent = JSON.stringify(schema);
+      document.head.appendChild(script);
+    }
 
     // ============================================================
     // INIT
@@ -2038,6 +2100,7 @@
       renderServices();
       renderGallery();
       renderFAQs();
+      generateFAQSchema();
       renderTestimonials();
       renderContact();
       observeFadeIns();
