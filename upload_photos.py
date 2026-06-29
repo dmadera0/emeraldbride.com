@@ -9,7 +9,7 @@ except ImportError:
     print("pip install boto3")
     sys.exit(1)
 
-SOURCE_DIR = Path("/Users/d.madera/Desktop/emeraldbride.com/processed")
+SOURCE_DIR = Path("/Users/d.madera/Desktop/Programs/emeraldbride.com/processed")
 BUCKET_NAME = "emeraldbride-site"
 PREFIX = "images/gallery/"
 PROFILE_NAME = "emeraldbride"
