@@ -1,0 +1,7 @@
+{
+    "Location": "/emeraldbride-site",
+    "BucketArn": "arn:aws:s3:::emeraldbride-site"
+}
+S3 Bucket Name: emeraldbride-site
+CloudFront Distribution ID: ELIZMJ2A07E3Q
+CloudFront Domain Name: d27ppwg0xrr4g5.cloudfront.net
