@@ -1341,6 +1341,8 @@
       document.getElementById('login-password').value = '';
     });
 
+    const UPLOAD_API_URL = 'https://sg0k9b4ggd.execute-api.us-east-1.amazonaws.com/prod/presign-upload';
+
     // ============================================================
     // DATA LAYER HELPERS
     // ============================================================
@@ -1792,22 +1794,49 @@
           if (warn) warn.style.display = 'none';
         }
 
-        function processFile(file) {
+        async function processFile(file) {
           if (!file || !file.type.startsWith('image/')) return;
+
           const reader = new FileReader();
           reader.onload = e => {
-            // Preview only — do NOT store base64 in the hidden url input.
             if (pvImg) pvImg.src = e.target.result;
             if (ph) ph.style.display = 'none';
             if (pv) pv.style.display = '';
-            if (urlWrap) urlWrap.style.display = '';
-            if (warn) {
-              warn.style.display = 'block';
-              warn.textContent = '⚠ Preview only — not saved. Host this image and paste the URL below to publish it.';
-            }
-            // hiddenUrl intentionally NOT set — keeps base64 out of localStorage
           };
           reader.readAsDataURL(file);
+
+          if (warn) {
+            warn.textContent = 'Uploading…';
+            warn.style.display = 'block';
+          }
+
+          try {
+            const sanitized = file.name
+              .toLowerCase()
+              .replace(/\s+/g, '-')
+              .replace(/[^a-z0-9._-]/g, '');
+            const filename = `${Date.now()}-${sanitized}`;
+
+            const presignRes = await fetch(`${UPLOAD_API_URL}?filename=${encodeURIComponent(filename)}`);
+            if (!presignRes.ok) throw new Error('Failed to get upload URL');
+            const { uploadUrl, publicUrl } = await presignRes.json();
+
+            const putRes = await fetch(uploadUrl, {
+              method: 'PUT',
+              headers: { 'Content-Type': file.type },
+              body: file
+            });
+            if (!putRes.ok) throw new Error('Upload failed');
+
+            showImage(publicUrl);
+            if (warn) warn.style.display = 'none';
+          } catch (err) {
+            if (warn) {
+              warn.textContent = '⚠ Upload failed — try again or paste a hosted URL below';
+              warn.style.display = 'block';
+            }
+            if (urlWrap) urlWrap.style.display = '';
+          }
         }
 
         // Click on placeholder or "change photo" overlay → file picker
