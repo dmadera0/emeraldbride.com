@@ -1744,6 +1744,50 @@
             <input type="hidden" data-field="url" data-index="${i}" value="${esc(item.url)}" />
             <input class="field-input" type="text" placeholder="Caption" value="${esc(item.caption)}" data-field="caption" data-index="${i}" />
             <input class="field-input" type="text" placeholder="Alt text (describe the image)" value="${esc(item.alt || '')}" data-field="alt" data-index="${i}" />
+            <div class="field-group" style="margin-top:8px;">
+              <label class="field-label" style="font-size:0.7rem; margin-bottom:4px; display:block;">
+                Focal Point — click to set where the photo stays centered
+              </label>
+              <div class="focal-point-wrap" id="fp-wrap-${i}" style="
+                position: relative;
+                width: 100%;
+                aspect-ratio: 16/9;
+                overflow: hidden;
+                border-radius: 4px;
+                border: 1px solid var(--color-border);
+                cursor: crosshair;
+                background: var(--color-emerald-faint);
+              ">
+                <img
+                  src="${esc(item.url)}"
+                  alt=""
+                  style="
+                    width:100%; height:100%;
+                    object-fit:cover;
+                    object-position: ${esc(item.focalPoint || '50% 50%')};
+                    display:block;
+                    pointer-events:none;
+                    user-select:none;
+                  "
+                  id="fp-img-${i}"
+                />
+                <div id="fp-dot-${i}" style="
+                  position:absolute;
+                  width:16px; height:16px;
+                  border-radius:50%;
+                  background: var(--color-gold);
+                  border: 2px solid white;
+                  transform: translate(-50%, -50%);
+                  pointer-events:none;
+                  box-shadow: 0 1px 4px rgba(0,0,0,0.4);
+                "></div>
+                <input type="hidden" data-field="focalPoint" data-index="${i}"
+                  value="${esc(item.focalPoint || '50% 50%')}" />
+              </div>
+              <p style="font-size:0.68rem; color:var(--color-taupe); margin-top:4px;">
+                Current: <span id="fp-label-${i}">${esc(item.focalPoint || '50% 50%')}</span>
+              </p>
+            </div>
           </div>
           <div class="gallery-admin-footer">
             <button class="btn-delete" data-delete-gallery="${i}">Delete</button>
@@ -1753,6 +1797,7 @@
 
       bindGalleryDrag();
       initGalleryDropZones();
+      initFocalPointPickers();
     }
 
     function initGalleryDropZones() {
@@ -1883,6 +1928,34 @@
       });
     }
 
+    function initFocalPointPickers() {
+      document.querySelectorAll('.focal-point-wrap').forEach(wrap => {
+        const item = wrap.closest('.gallery-admin-item');
+        const i = parseInt(item.dataset.index);
+        const dot      = document.getElementById(`fp-dot-${i}`);
+        const label    = document.getElementById(`fp-label-${i}`);
+        const fpImg    = document.getElementById(`fp-img-${i}`);
+        const hiddenFp = wrap.querySelector('[data-field="focalPoint"]');
+
+        const stored = (hiddenFp ? hiddenFp.value : '') || '50% 50%';
+        const parts  = stored.split(' ');
+        if (dot) {
+          dot.style.left = parts[0] || '50%';
+          dot.style.top  = parts[1] || '50%';
+        }
+
+        wrap.addEventListener('click', e => {
+          const x  = (e.offsetX / wrap.offsetWidth  * 100).toFixed(0) + '%';
+          const y  = (e.offsetY / wrap.offsetHeight * 100).toFixed(0) + '%';
+          const fp = `${x} ${y}`;
+          if (hiddenFp) hiddenFp.value           = fp;
+          if (label)    label.textContent         = fp;
+          if (fpImg)    fpImg.style.objectPosition = fp;
+          if (dot) { dot.style.left = x; dot.style.top = y; }
+        });
+      });
+    }
+
     function bindGalleryDrag() {
       const items = document.querySelectorAll('.gallery-admin-item');
       items.forEach(item => {
@@ -1920,6 +1993,8 @@
         if (url)     items[i].url     = url.value.trim();
         if (caption) items[i].caption = caption.value.trim();
         if (alt)     items[i].alt     = alt.value.trim();
+        const fp = el.querySelector('[data-field="focalPoint"]');
+        if (fp) items[i].focalPoint = fp.value.trim() || '50% 50%';
       });
       return items;
     }
