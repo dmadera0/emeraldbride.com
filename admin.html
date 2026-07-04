@@ -1564,15 +1564,19 @@
         reader.readAsDataURL(file);
 
         if (zoneId === 'dz-hero') {
-          // Hero zone: upload to S3 via presigned URL
+          // Hero zone: optimize then upload to S3 via presigned URL
           if (warn) {
-            warn.style.display = 'block';
-            warn.textContent = 'Uploading…';
-            warn.style.color = '';
+            warn.style.display   = 'block';
+            warn.textContent     = 'Optimizing…';
+            warn.style.color     = '';
             warn.style.fontStyle = '';
           }
           try {
-            const sanitized = file.name
+            const { file: optimizedFile, originalSize, optimizedSize, width, height } = await optimizeImageForWeb(file);
+
+            if (warn) warn.textContent = 'Uploading…';
+
+            const sanitized = optimizedFile.name
               .toLowerCase()
               .replace(/\s+/g, '-')
               .replace(/[^a-z0-9._-]/g, '');
@@ -1582,18 +1586,24 @@
             const { uploadUrl, publicUrl } = await presignRes.json();
             const putRes = await fetch(uploadUrl, {
               method: 'PUT',
-              headers: { 'Content-Type': file.type },
-              body: file
+              headers: { 'Content-Type': optimizedFile.type },
+              body: optimizedFile
             });
             if (!putRes.ok) throw new Error('Upload failed');
             if (valueInput) valueInput.value = publicUrl;
             img.src = publicUrl;
-            if (warn) warn.style.display = 'none';
+            if (warn) {
+              const savedPct = ((1 - optimizedSize / originalSize) * 100).toFixed(0);
+              warn.textContent   = `✓ Optimized: ${width}×${height}px · ${(optimizedSize / 1024).toFixed(0)}KB · ${savedPct}% smaller`;
+              warn.style.color   = 'var(--color-emerald)';
+              warn.style.display = 'block';
+              setTimeout(() => { warn.style.display = 'none'; }, 3000);
+            }
           } catch (err) {
             if (warn) {
-              warn.style.display = 'block';
-              warn.textContent = '⚠ Upload failed — try again or paste a hosted URL below';
-              warn.style.color = '#c0392b';
+              warn.style.display   = 'block';
+              warn.textContent     = '⚠ Upload failed — try again or paste a hosted URL below';
+              warn.style.color     = '#c0392b';
               warn.style.fontStyle = 'italic';
             }
           }
@@ -1896,6 +1906,49 @@
       initFocalPointPickers();
     }
 
+    async function optimizeImageForWeb(file) {
+      return new Promise((resolve, reject) => {
+        const MAX_WIDTH     = 1920;
+        const MAX_HEIGHT    = 1080;
+        const QUALITY       = 0.85;
+        const OUTPUT_FORMAT = 'image/webp';
+
+        const img       = new Image();
+        const objectUrl = URL.createObjectURL(file);
+
+        img.onload = () => {
+          URL.revokeObjectURL(objectUrl);
+
+          let { width, height } = img;
+
+          if (width > MAX_WIDTH || height > MAX_HEIGHT) {
+            const widthRatio  = MAX_WIDTH  / width;
+            const heightRatio = MAX_HEIGHT / height;
+            const ratio = Math.min(widthRatio, heightRatio);
+            width  = Math.round(width  * ratio);
+            height = Math.round(height * ratio);
+          }
+
+          const canvas  = document.createElement('canvas');
+          canvas.width  = width;
+          canvas.height = height;
+
+          const ctx = canvas.getContext('2d');
+          ctx.drawImage(img, 0, 0, width, height);
+
+          canvas.toBlob(blob => {
+            if (!blob) { reject(new Error('Canvas toBlob failed')); return; }
+            const originalName = file.name.replace(/\.[^.]+$/, '');
+            const optimized = new File([blob], originalName + '.webp', { type: OUTPUT_FORMAT });
+            resolve({ file: optimized, originalSize: file.size, optimizedSize: blob.size, width, height });
+          }, OUTPUT_FORMAT, QUALITY);
+        };
+
+        img.onerror = () => { URL.revokeObjectURL(objectUrl); reject(new Error('Image failed to load')); };
+        img.src = objectUrl;
+      });
+    }
+
     function initGalleryDropZones() {
       document.querySelectorAll('.gallery-dz').forEach(zone => {
         const i         = parseInt(zone.dataset.galIndex);
@@ -1947,12 +2000,17 @@
           reader.readAsDataURL(file);
 
           if (warn) {
-            warn.textContent = 'Uploading…';
+            warn.textContent   = 'Optimizing…';
+            warn.style.color   = '';
             warn.style.display = 'block';
           }
 
           try {
-            const sanitized = file.name
+            const { file: optimizedFile, originalSize, optimizedSize, width, height } = await optimizeImageForWeb(file);
+
+            if (warn) warn.textContent = 'Uploading…';
+
+            const sanitized = optimizedFile.name
               .toLowerCase()
               .replace(/\s+/g, '-')
               .replace(/[^a-z0-9._-]/g, '');
@@ -1964,16 +2022,24 @@
 
             const putRes = await fetch(uploadUrl, {
               method: 'PUT',
-              headers: { 'Content-Type': file.type },
-              body: file
+              headers: { 'Content-Type': optimizedFile.type },
+              body: optimizedFile
             });
             if (!putRes.ok) throw new Error('Upload failed');
 
             showImage(publicUrl);
-            if (warn) warn.style.display = 'none';
+
+            if (warn) {
+              const savedPct = ((1 - optimizedSize / originalSize) * 100).toFixed(0);
+              warn.textContent  = `✓ Optimized: ${width}×${height}px · ${(optimizedSize / 1024).toFixed(0)}KB · ${savedPct}% smaller`;
+              warn.style.color  = 'var(--color-emerald)';
+              warn.style.display = 'block';
+              setTimeout(() => { warn.style.display = 'none'; }, 3000);
+            }
           } catch (err) {
             if (warn) {
-              warn.textContent = '⚠ Upload failed — try again or paste a hosted URL below';
+              warn.textContent   = '⚠ Upload failed — try again or paste a hosted URL below';
+              warn.style.color   = '';
               warn.style.display = 'block';
             }
             if (urlWrap) urlWrap.style.display = '';
