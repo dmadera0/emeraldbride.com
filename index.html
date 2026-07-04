@@ -2222,6 +2222,7 @@
     //   POST /api/gallery/upload (replace S3 presigned URL flow)
 
     const GALLERY_STATE_URL = 'https://d27ppwg0xrr4g5.cloudfront.net/gallery-state.json';
+    const HERO_STATE_URL    = 'https://d27ppwg0xrr4g5.cloudfront.net/hero-state.json';
 
     // ============================================================
     // DATA DEFAULTS — fallback when localStorage is empty
@@ -2343,19 +2344,28 @@
     // ============================================================
     // RENDER — HERO
     // ============================================================
-    function renderHero() {
-      const d = getData('hero', DEFAULTS.hero);
+    async function renderHero() {
+      let heroData = DEFAULTS.hero;
+      try {
+        const res = await fetch(HERO_STATE_URL + '?t=' + Date.now());
+        if (res.ok) {
+          const data = await res.json();
+          if (data && typeof data === 'object') heroData = data;
+        }
+      } catch (_) {}
+
       const eyebrow = document.getElementById('hero-eyebrow');
       const heading  = document.getElementById('hero-heading');
       const sub      = document.getElementById('hero-subheading');
-      if (eyebrow) eyebrow.textContent = d.eyebrow;
-      if (heading)  heading.textContent  = d.heading;
-      if (sub)      sub.textContent      = d.subheading;
-      const heroEl = document.querySelector('.hero');
-      const imageUrl = (d.imageUrl && !d.imageUrl.endsWith('.svg')) ? d.imageUrl : DEFAULTS.hero.imageUrl;
-      if (imageUrl && heroEl) {
-        heroEl.style.backgroundImage = `url(${imageUrl})`;
-        heroEl.style.backgroundSize  = 'cover';
+      if (eyebrow) eyebrow.textContent = heroData.eyebrow    || '';
+      if (heading)  heading.textContent  = heroData.heading   || '';
+      if (sub)      sub.textContent      = heroData.subheading || '';
+
+      const heroEl   = document.querySelector('.hero');
+      const imageUrl = heroData.imageUrl;
+      if (imageUrl && !imageUrl.endsWith('.svg') && heroEl && heroData.hidden !== true) {
+        heroEl.style.backgroundImage    = `url(${imageUrl})`;
+        heroEl.style.backgroundSize     = 'cover';
         heroEl.style.backgroundPosition = 'center';
         // background-attachment handled by CSS (fixed on desktop, scroll on mobile/iOS)
       }
@@ -2416,7 +2426,7 @@
         if (res.ok) {
           const data = await res.json();
           if (Array.isArray(data) && data.some(i => i.url)) {
-            carouselItems = data;
+            carouselItems = data.filter(i => i.url && !i.hidden);
           }
         }
       } catch (_) {}
@@ -2727,7 +2737,7 @@
     function init() {
       const yearEl = document.getElementById('copyright-year');
       if (yearEl) yearEl.textContent = new Date().getFullYear();
-      renderHero();
+      (async () => { await renderHero(); })();
       renderAbout();
       renderServices();
       (async () => { await renderGallery(); })();

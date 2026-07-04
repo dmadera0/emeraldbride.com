@@ -1,10 +1,11 @@
 """
 deploy_upload_lambda.py
 
-Sets up three serverless endpoints for the emeraldbride site:
+Sets up four serverless endpoints for the emeraldbride site:
   1. GET  /presign-upload      → emeraldbride-presign-upload Lambda
   2. POST /save-gallery-state  → emeraldbride-save-gallery-state Lambda
   3. POST /save-hero-state     → emeraldbride-save-hero-state Lambda
+  4. GET  /list-gallery        → emeraldbride-list-gallery Lambda
 
 Both share the IAM role emeraldbride-lambda-role and the API Gateway
 HTTP API emeraldbride-api (ID: sg0k9b4ggd), prod stage.
@@ -38,6 +39,9 @@ SAVE_STATE_FILE          = "save_state.py"
 HERO_STATE_FUNCTION_NAME = "emeraldbride-save-hero-state"
 HERO_STATE_FILE          = "save_hero_state.py"
 
+LIST_GALLERY_FUNCTION_NAME = "emeraldbride-list-gallery"
+LIST_GALLERY_FILE          = "list_gallery.py"
+
 session    = boto3.Session(profile_name=PROFILE, region_name=REGION)
 iam        = session.client("iam")
 aws_lambda = session.client("lambda")
@@ -62,15 +66,23 @@ TRUST_POLICY = json.dumps({
 
 S3_INLINE_POLICY = json.dumps({
     "Version": "2012-10-17",
-    "Statement": [{
-        "Effect": "Allow",
-        "Action": "s3:PutObject",
-        "Resource": [
-            f"arn:aws:s3:::{BUCKET}/images/gallery/*",
-            f"arn:aws:s3:::{BUCKET}/gallery-state.json",
-            f"arn:aws:s3:::{BUCKET}/hero-state.json",
-        ],
-    }],
+    "Statement": [
+        {
+            "Effect": "Allow",
+            "Action": "s3:PutObject",
+            "Resource": [
+                f"arn:aws:s3:::{BUCKET}/images/gallery/*",
+                f"arn:aws:s3:::{BUCKET}/gallery-state.json",
+                f"arn:aws:s3:::{BUCKET}/hero-state.json",
+            ],
+        },
+        {
+            "Effect": "Allow",
+            "Action": "s3:ListBucket",
+            "Resource": f"arn:aws:s3:::{BUCKET}",
+            "Condition": {"StringLike": {"s3:prefix": "images/gallery/*"}},
+        },
+    ],
 })
 
 
@@ -391,7 +403,77 @@ def ensure_save_state_route(fn_arn: str) -> None:
 
 
 # ---------------------------------------------------------------------------
-# 7. API Gateway — save-hero-state route
+# 7. Lambda + route — list-gallery
+# ---------------------------------------------------------------------------
+
+def ensure_list_gallery_lambda(zip_bytes: bytes) -> str:
+    print(f"[Lambda] Ensuring function '{LIST_GALLERY_FUNCTION_NAME}'...")
+    return _create_or_update_lambda(
+        function_name=LIST_GALLERY_FUNCTION_NAME,
+        handler="list_gallery.lambda_handler",
+        description="Lists S3 gallery photos for the emeraldbride admin panel",
+        role_arn=ROLE_ARN,
+        zip_bytes=zip_bytes,
+    )
+
+
+def ensure_list_gallery_route(fn_arn: str) -> None:
+    api_id = API_ID
+    print(f"[APIGW] Ensuring route GET /list-gallery on API {api_id}...")
+
+    lambda_integration_uri = (
+        f"arn:aws:apigateway:{REGION}:lambda:path/2015-03-31/functions/{fn_arn}/invocations"
+    )
+
+    integrations = apigw.get_integrations(ApiId=api_id).get("Items", [])
+    existing_integration = next(
+        (i for i in integrations if i.get("IntegrationUri") == lambda_integration_uri), None
+    )
+
+    if existing_integration is None:
+        integration = apigw.create_integration(
+            ApiId=api_id,
+            IntegrationType="AWS_PROXY",
+            IntegrationUri=lambda_integration_uri,
+            PayloadFormatVersion="2.0",
+        )
+        integration_id = integration["IntegrationId"]
+        print(f"[APIGW] Created integration: {integration_id}")
+    else:
+        integration_id = existing_integration["IntegrationId"]
+        print(f"[APIGW] Integration already exists: {integration_id}")
+
+    routes = apigw.get_routes(ApiId=api_id).get("Items", [])
+    existing_route = next(
+        (r for r in routes if r.get("RouteKey") == "GET /list-gallery"), None
+    )
+
+    if existing_route is None:
+        apigw.create_route(
+            ApiId=api_id,
+            RouteKey="GET /list-gallery",
+            Target=f"integrations/{integration_id}",
+        )
+        print("[APIGW] Created route: GET /list-gallery")
+    else:
+        print("[APIGW] Route already exists: GET /list-gallery")
+
+    source_arn = f"arn:aws:execute-api:{REGION}:{ACCOUNT_ID}:{api_id}/*/*/list-gallery"
+    try:
+        aws_lambda.add_permission(
+            FunctionName=LIST_GALLERY_FUNCTION_NAME,
+            StatementId="apigw-invoke",
+            Action="lambda:InvokeFunction",
+            Principal="apigateway.amazonaws.com",
+            SourceArn=source_arn,
+        )
+        print("[Lambda] Added API Gateway invoke permission for list-gallery.")
+    except aws_lambda.exceptions.ResourceConflictException:
+        print("[Lambda] Invoke permission already exists for list-gallery.")
+
+
+# ---------------------------------------------------------------------------
+# 8. API Gateway — save-hero-state route
 # ---------------------------------------------------------------------------
 
 def ensure_save_hero_state_route(fn_arn: str) -> None:
@@ -493,6 +575,11 @@ def main():
     hero_fn_arn = ensure_save_hero_state_lambda(hero_zip)
     ensure_save_hero_state_route(hero_fn_arn)
 
+    # list-gallery Lambda + API route
+    list_zip    = build_zip(LIST_GALLERY_FILE, arcname="list_gallery.py")
+    list_fn_arn = ensure_list_gallery_lambda(list_zip)
+    ensure_list_gallery_route(list_fn_arn)
+
     # Redeploy prod stage
     ensure_stage(api_id)
 
@@ -503,6 +590,7 @@ def main():
     print(f" Presign upload URL : {base_url}/presign-upload")
     print(f" Save gallery URL   : {base_url}/save-gallery-state")
     print(f" Save hero URL      : {base_url}/save-hero-state")
+    print(f" List gallery URL   : {base_url}/list-gallery")
     print("=" * 60)
 
 
