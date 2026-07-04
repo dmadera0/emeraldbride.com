@@ -1,9 +1,10 @@
 """
 deploy_upload_lambda.py
 
-Sets up two serverless endpoints for the emeraldbride site:
+Sets up three serverless endpoints for the emeraldbride site:
   1. GET  /presign-upload      → emeraldbride-presign-upload Lambda
   2. POST /save-gallery-state  → emeraldbride-save-gallery-state Lambda
+  3. POST /save-hero-state     → emeraldbride-save-hero-state Lambda
 
 Both share the IAM role emeraldbride-lambda-role and the API Gateway
 HTTP API emeraldbride-api (ID: sg0k9b4ggd), prod stage.
@@ -33,6 +34,9 @@ LAMBDA_FILE        = "lambda_function.py"
 
 SAVE_STATE_FUNCTION_NAME = "emeraldbride-save-gallery-state"
 SAVE_STATE_FILE          = "save_state.py"
+
+HERO_STATE_FUNCTION_NAME = "emeraldbride-save-hero-state"
+HERO_STATE_FILE          = "save_hero_state.py"
 
 session    = boto3.Session(profile_name=PROFILE, region_name=REGION)
 iam        = session.client("iam")
@@ -64,6 +68,7 @@ S3_INLINE_POLICY = json.dumps({
         "Resource": [
             f"arn:aws:s3:::{BUCKET}/images/gallery/*",
             f"arn:aws:s3:::{BUCKET}/gallery-state.json",
+            f"arn:aws:s3:::{BUCKET}/hero-state.json",
         ],
     }],
 })
@@ -199,6 +204,17 @@ def ensure_save_state_lambda(zip_bytes: bytes) -> str:
         function_name=SAVE_STATE_FUNCTION_NAME,
         handler="save_state.lambda_handler",
         description="Persists gallery state JSON to S3 for emeraldbride site",
+        role_arn=ROLE_ARN,
+        zip_bytes=zip_bytes,
+    )
+
+
+def ensure_save_hero_state_lambda(zip_bytes: bytes) -> str:
+    print(f"[Lambda] Ensuring function '{HERO_STATE_FUNCTION_NAME}'...")
+    return _create_or_update_lambda(
+        function_name=HERO_STATE_FUNCTION_NAME,
+        handler="save_hero_state.lambda_handler",
+        description="Persists hero state JSON to S3 for emeraldbride site",
         role_arn=ROLE_ARN,
         zip_bytes=zip_bytes,
     )
@@ -375,7 +391,66 @@ def ensure_save_state_route(fn_arn: str) -> None:
 
 
 # ---------------------------------------------------------------------------
-# 7. Deploy stage
+# 7. API Gateway — save-hero-state route
+# ---------------------------------------------------------------------------
+
+def ensure_save_hero_state_route(fn_arn: str) -> None:
+    api_id = API_ID
+    print(f"[APIGW] Ensuring route POST /save-hero-state on API {api_id}...")
+
+    lambda_integration_uri = (
+        f"arn:aws:apigateway:{REGION}:lambda:path/2015-03-31/functions/{fn_arn}/invocations"
+    )
+
+    integrations = apigw.get_integrations(ApiId=api_id).get("Items", [])
+    existing_integration = next(
+        (i for i in integrations if i.get("IntegrationUri") == lambda_integration_uri), None
+    )
+
+    if existing_integration is None:
+        integration = apigw.create_integration(
+            ApiId=api_id,
+            IntegrationType="AWS_PROXY",
+            IntegrationUri=lambda_integration_uri,
+            PayloadFormatVersion="2.0",
+        )
+        integration_id = integration["IntegrationId"]
+        print(f"[APIGW] Created integration: {integration_id}")
+    else:
+        integration_id = existing_integration["IntegrationId"]
+        print(f"[APIGW] Integration already exists: {integration_id}")
+
+    routes = apigw.get_routes(ApiId=api_id).get("Items", [])
+    existing_route = next(
+        (r for r in routes if r.get("RouteKey") == "POST /save-hero-state"), None
+    )
+
+    if existing_route is None:
+        apigw.create_route(
+            ApiId=api_id,
+            RouteKey="POST /save-hero-state",
+            Target=f"integrations/{integration_id}",
+        )
+        print("[APIGW] Created route: POST /save-hero-state")
+    else:
+        print("[APIGW] Route already exists: POST /save-hero-state")
+
+    source_arn = f"arn:aws:execute-api:{REGION}:{ACCOUNT_ID}:{api_id}/*/*/save-hero-state"
+    try:
+        aws_lambda.add_permission(
+            FunctionName=HERO_STATE_FUNCTION_NAME,
+            StatementId="apigw-invoke",
+            Action="lambda:InvokeFunction",
+            Principal="apigateway.amazonaws.com",
+            SourceArn=source_arn,
+        )
+        print("[Lambda] Added API Gateway invoke permission for save-hero-state.")
+    except aws_lambda.exceptions.ResourceConflictException:
+        print("[Lambda] Invoke permission already exists for save-hero-state.")
+
+
+# ---------------------------------------------------------------------------
+# 8. Deploy stage
 # ---------------------------------------------------------------------------
 
 def ensure_stage(api_id: str) -> None:
@@ -400,7 +475,7 @@ def main():
     print(" emeraldbride infrastructure setup")
     print("=" * 60)
 
-    # IAM role (updates inline policy to cover both functions)
+    # IAM role (updates inline policy to cover all functions)
     role_arn = ensure_iam_role()
 
     # presign-upload Lambda + API route
@@ -409,9 +484,14 @@ def main():
     api_id      = ensure_api(fn_arn)
 
     # save-gallery-state Lambda + API route
-    save_zip        = build_zip(SAVE_STATE_FILE, arcname="save_state.py")
-    save_fn_arn     = ensure_save_state_lambda(save_zip)
+    save_zip    = build_zip(SAVE_STATE_FILE, arcname="save_state.py")
+    save_fn_arn = ensure_save_state_lambda(save_zip)
     ensure_save_state_route(save_fn_arn)
+
+    # save-hero-state Lambda + API route
+    hero_zip    = build_zip(HERO_STATE_FILE, arcname="save_hero_state.py")
+    hero_fn_arn = ensure_save_hero_state_lambda(hero_zip)
+    ensure_save_hero_state_route(hero_fn_arn)
 
     # Redeploy prod stage
     ensure_stage(api_id)
@@ -422,6 +502,7 @@ def main():
     print(" Done!")
     print(f" Presign upload URL : {base_url}/presign-upload")
     print(f" Save gallery URL   : {base_url}/save-gallery-state")
+    print(f" Save hero URL      : {base_url}/save-hero-state")
     print("=" * 60)
 
 

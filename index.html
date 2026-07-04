@@ -2221,6 +2221,8 @@
     //   POST /api/admin/login
     //   POST /api/gallery/upload (replace S3 presigned URL flow)
 
+    const GALLERY_STATE_URL = 'https://d27ppwg0xrr4g5.cloudfront.net/gallery-state.json';
+
     // ============================================================
     // DATA DEFAULTS — fallback when localStorage is empty
     // ============================================================
@@ -2407,15 +2409,17 @@
     let carouselDragDelta = 0;
     let carouselAutoTimer = null;
 
-    function renderGallery() {
-      const stored = getData('gallery', null);
-      const isValidUrl = url => url && !url.startsWith('data:') && !url.endsWith('.svg');
-      carouselItems = (stored && stored.some(i => isValidUrl(i.url)))
-        ? stored.map((item, i) => ({
-            ...item,
-            url: isValidUrl(item.url) ? item.url : (DEFAULTS.gallery[i] ? DEFAULTS.gallery[i].url : '')
-          }))
-        : DEFAULTS.gallery;
+    async function renderGallery() {
+      carouselItems = DEFAULTS.gallery;
+      try {
+        const res = await fetch(GALLERY_STATE_URL + '?t=' + Date.now());
+        if (res.ok) {
+          const data = await res.json();
+          if (Array.isArray(data) && data.some(i => i.url)) {
+            carouselItems = data;
+          }
+        }
+      } catch (_) {}
 
       const track   = document.getElementById('carousel-track');
       const dotsEl  = document.getElementById('carousel-dots');
@@ -2726,7 +2730,7 @@
       renderHero();
       renderAbout();
       renderServices();
-      renderGallery();
+      (async () => { await renderGallery(); })();
       initCarouselControls();
       renderFAQs();
       generateFAQSchema();

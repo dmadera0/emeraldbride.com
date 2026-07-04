@@ -1342,6 +1342,7 @@
     });
 
     const UPLOAD_API_URL = 'https://sg0k9b4ggd.execute-api.us-east-1.amazonaws.com/prod/presign-upload';
+    const SAVE_STATE_URL = 'https://sg0k9b4ggd.execute-api.us-east-1.amazonaws.com/prod/save-gallery-state';
 
     // ============================================================
     // DATA LAYER HELPERS
@@ -2018,15 +2019,28 @@
 
     // Gallery URL inputs handled per-item by initGalleryDropZones()
 
-    function saveGallery() {
+    async function saveGallery() {
       const saved = collectGalleryState();
       const hasBase64 = saved.some(item => isBase64Image(item.url));
       if (hasBase64) {
-        showToast('⚠ One or more images were uploaded directly — use hosted URLs instead. Those images were not saved.');
+        showToast('⚠ One or more images were not uploaded properly and were not saved.');
         return;
       }
-      setData('gallery', saved);
-      clearDirty();
+      try {
+        showToast('Saving…');
+        const res = await fetch(SAVE_STATE_URL, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ gallery: saved })
+        });
+        if (!res.ok) throw new Error('Server error ' + res.status);
+        setData('gallery', saved);
+        clearDirty();
+        showToast('Gallery saved ✓');
+      } catch (err) {
+        showToast('⚠ Save failed — check your connection and try again.');
+        console.error('saveGallery error:', err);
+      }
     }
 
     // ============================================================
