@@ -3,20 +3,20 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Emerald Bride | Las Vegas Bridal Makeup Artist</title>
-  <meta name="description" content="Emerald Bride is Las Vegas's luxury bridal makeup artist — specializing in editorial bridal glam, bridal party makeup, and destination weddings worldwide. Book your trial today." />
+  <title>Emerald Bride | Luxury Mobile Bridal Makeup Studio in Las Vegas</title>
+  <meta name="description" content="Emerald Bride is a luxury mobile bridal makeup studio based in Las Vegas, dedicated to creating timeless bridal looks with convenience and elegance." />
 
   <!-- Open Graph -->
-  <meta property="og:title" content="Emerald Bride | Las Vegas Bridal Makeup Artist" />
-  <meta property="og:description" content="Luxury bridal makeup for your most beautiful day. Serving Las Vegas and destination weddings worldwide." />
+  <meta property="og:title" content="Emerald Bride | Luxury Mobile Bridal Makeup Studio in Las Vegas" />
+  <meta property="og:description" content="Emerald Bride is a luxury mobile bridal makeup studio based in Las Vegas, dedicated to creating timeless bridal looks with convenience and elegance." />
   <meta property="og:image" content="https://emeraldbride.com/og-image.jpg" />
   <meta property="og:url" content="https://emeraldbride.com" />
   <meta property="og:type" content="website" />
 
   <!-- Twitter Card -->
   <meta name="twitter:card" content="summary_large_image" />
-  <meta name="twitter:title" content="Emerald Bride | Las Vegas Bridal Makeup Artist" />
-  <meta name="twitter:description" content="Luxury bridal makeup for your most beautiful day. Serving Las Vegas and destination weddings worldwide." />
+  <meta name="twitter:title" content="Emerald Bride | Luxury Mobile Bridal Makeup Studio in Las Vegas" />
+  <meta name="twitter:description" content="Emerald Bride is a luxury mobile bridal makeup studio based in Las Vegas, dedicated to creating timeless bridal looks with convenience and elegance." />
   <meta name="twitter:image" content="https://emeraldbride.com/og-image.jpg" />
   <meta property="og:image:width" content="1200" />
   <meta property="og:image:height" content="630" />
@@ -39,7 +39,7 @@
   <link rel="sitemap" type="application/xml" href="/sitemap.xml" />
 
   <!-- Mobile browser chrome color -->
-  <meta name="theme-color" content="#1B4332" />
+  <meta name="theme-color" content="#898F75" />
 
   <!-- TODO: Generate favicon files from the logo.
        Use realfavicongenerator.net — upload the logo, download the package,
@@ -49,9 +49,13 @@
   <link rel="apple-touch-icon" href="./images/apple-touch-icon.png" />
 
   <!-- Google Fonts -->
+  <!-- Brandbook specifies "La Mexicana" for headings; it is not published on Google Fonts
+       and no licensed font files were available, so Playfair Display (bold, elegant serif
+       with distinctive character) is substituted per stakeholder decision. Swap the
+       @import and --font-heading value below if licensed La Mexicana files become available. -->
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400&family=Lato:wght@300;400;700&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;1,400&family=Lora:ital,wght@0,400;0,500;1,600&display=swap" rel="stylesheet" />
 
   <!-- DNS prefetch for external services -->
   <link rel="dns-prefetch" href="https://assets.calendly.com" />
@@ -65,10 +69,10 @@
         "@type": ["LocalBusiness", "BeautySalon"],
         "@id": "https://emeraldbride.com/#business",
         "name": "Emerald Bride",
-        "description": "Luxury bridal makeup artist specializing in effortless, editorial bridal glam in Las Vegas and destination weddings worldwide.",
+        "description": "Emerald Bride is a luxury mobile bridal makeup studio based in Las Vegas, dedicated to creating timeless bridal looks with convenience and elegance.",
         "url": "https://emeraldbride.com",
-        "telephone": "",
-        "email": "hello@emeraldbride.com",
+        "telephone": "+1-725-300-4543",
+        "email": "support@emeraldbride.com",
         "address": {
           "@type": "PostalAddress",
           "addressLocality": "Las Vegas",
@@ -193,19 +197,34 @@
        CSS CUSTOM PROPERTIES — BRAND TOKENS
     ============================================================ */
     :root {
-      --color-emerald:    #1B4332;
-      --color-emerald-light: #2D6A4F;
-      --color-gold:       #C9A84C;
-      --color-gold-light: #D4B96A;
-      --color-ivory:      #FAF7F2;
-      --color-off-white:  #FEFEFE;
-      --color-taupe:      #8B7355;
-      --color-charcoal:   #2C2C2C;
-      --color-charcoal-light: #4A4A4A;
-      --color-border:     #E8E0D4;
+      /* ---- Emerald Bride Brandbook palette (60-30-10) ---- */
+      --color-primary-a: #B6C59A;   /* Sage Green   — 60%: dominant backgrounds/sections */
+      --color-primary-b: #898F75;   /* Deep Muted Green — secondary accent on primary */
+      --color-secondary: #E9ADB7;   /* Soft Pink    — 30%: contrast/accent */
+      --color-accent-b:  #E9DCD3;   /* Warm Beige   — 10%: understated accent */
+      --color-accent-a:  #FFFFFF;   /* White        — 10%: clean/premium */
 
-      --font-heading: 'Cormorant Garamond', Georgia, serif;
-      --font-body:    'Lato', system-ui, sans-serif;
+      /* ---- Legacy token names kept so existing rules below don't need
+         renaming everywhere; each now resolves to its brandbook role. ---- */
+      --color-emerald:       var(--color-primary-b);
+      --color-emerald-light: var(--color-primary-a);
+      --color-gold:          var(--color-secondary);
+      --color-gold-light:    #F1C4CC; /* lighter pink tint, hover states only */
+      --color-ivory:         var(--color-accent-a);
+      --color-off-white:     var(--color-accent-a);
+      --color-border:        var(--color-accent-b);
+
+      /* ---- Ink/neutral tones: the brandbook's 5 colors are all light/pastel,
+         so body copy and small labels still need a dark, readable ink.
+         --color-taupe is derived from the primary sage hue (not a literal
+         brandbook swatch) to stay tonally on-brand while remaining legible. ---- */
+      --color-taupe:          #5C6350;
+      --color-charcoal:       #2C2C2C;
+      --color-charcoal-light: #4A4A4A;
+
+      --font-heading:    'Playfair Display', Georgia, serif;
+      --font-subheading: 'Lora', Georgia, serif;
+      --font-body:       'Lora', Georgia, serif;
 
       --max-width: 1200px;
       --section-padding: 100px 24px;
@@ -214,9 +233,9 @@
       --transition-base: 0.3s ease;
       --transition-slow: 0.6s ease;
 
-      --shadow-sm:  0 2px 8px rgba(27, 67, 50, 0.08);
-      --shadow-md:  0 8px 32px rgba(27, 67, 50, 0.12);
-      --shadow-lg:  0 20px 60px rgba(27, 67, 50, 0.16);
+      --shadow-sm:  0 2px 8px rgba(44, 44, 44, 0.08);
+      --shadow-md:  0 8px 32px rgba(44, 44, 44, 0.12);
+      --shadow-lg:  0 20px 60px rgba(44, 44, 44, 0.16);
 
       --radius-sm: 4px;
       --radius-md: 8px;
@@ -264,36 +283,39 @@
     /* ============================================================
        FOCUS STATES — WCAG 2.1 AA
     ============================================================ */
+    /* Focus rings use --color-emerald (Deep Muted Green) rather than the pink
+       secondary — pink's contrast against light backgrounds is too low to meet
+       WCAG's 3:1 non-text contrast minimum for focus indicators. */
     .faq-trigger:focus-visible {
-      outline: 2px solid var(--color-gold);
+      outline: 2px solid var(--color-emerald);
       outline-offset: 2px;
       border-radius: var(--radius-sm);
     }
 
     .nav-links a:focus-visible {
-      outline: 2px solid var(--color-gold);
+      outline: 2px solid var(--color-emerald);
       outline-offset: 4px;
       border-radius: 2px;
     }
 
     .nav-toggle:focus-visible {
-      outline: 2px solid var(--color-gold);
+      outline: 2px solid var(--color-emerald);
       outline-offset: 4px;
       border-radius: var(--radius-sm);
     }
 
     .btn:focus-visible {
-      outline: 2px solid var(--color-gold);
+      outline: 2px solid var(--color-emerald);
       outline-offset: 3px;
     }
 
     .footer-social-link:focus-visible {
-      outline: 2px solid var(--color-gold);
+      outline: 2px solid var(--color-secondary);
       outline-offset: 3px;
     }
 
     .gallery-item:focus-visible {
-      outline: 2px solid var(--color-gold);
+      outline: 2px solid var(--color-emerald);
       outline-offset: 2px;
     }
 
@@ -306,12 +328,12 @@
       font-weight: 700;
       letter-spacing: 0.18em;
       text-transform: uppercase;
-      color: var(--color-gold);
+      color: var(--color-taupe);
     }
 
     h1, h2, h3, h4 {
       font-family: var(--font-heading);
-      font-weight: 400;
+      font-weight: 700;
       line-height: 1.15;
     }
 
@@ -320,7 +342,9 @@
     h3 { font-size: clamp(1.3rem, 2.5vw, 1.7rem); }
 
     .section-subheading {
-      font-family: var(--font-body);
+      font-family: var(--font-subheading);
+      font-style: italic;
+      font-weight: 600;
       font-size: 1rem;
       color: var(--color-taupe);
       max-width: 540px;
@@ -368,15 +392,19 @@
       text-align: center;
     }
 
+    /* Solid charcoal + white reads reliably against every brandbook section
+       color (sage, beige, pink, white) — the pastel palette itself is too
+       close in lightness to serve as a button fill against other pastels. */
     .btn-primary {
-      background: var(--color-emerald);
-      color: var(--color-ivory);
-      border: 2px solid var(--color-emerald);
+      background: var(--color-charcoal);
+      color: var(--color-accent-a);
+      border: 2px solid var(--color-charcoal);
     }
 
     .btn-primary:hover {
       background: var(--color-emerald-light);
       border-color: var(--color-emerald-light);
+      color: var(--color-charcoal);
       transform: translateY(-2px);
       box-shadow: var(--shadow-md);
     }
@@ -384,35 +412,35 @@
     .btn-outline {
       background: transparent;
       color: var(--color-ivory);
-      border: 2px solid rgba(250, 247, 242, 0.7);
+      border: 2px solid rgba(255, 255, 255, 0.7);
     }
 
     .btn-outline:hover {
-      background: rgba(250, 247, 242, 0.12);
+      background: rgba(255, 255, 255, 0.12);
       border-color: var(--color-ivory);
       transform: translateY(-2px);
     }
 
     .btn-outline-dark {
       background: transparent;
-      color: var(--color-emerald);
+      color: var(--color-charcoal);
       border: 2px solid var(--color-emerald);
     }
 
     .btn-outline-dark:hover {
       background: var(--color-emerald);
-      color: var(--color-ivory);
+      color: var(--color-charcoal);
       transform: translateY(-2px);
     }
 
     /* ============================================================
-       GOLD ACCENT ELEMENTS — Fix 8
+       ACCENT ELEMENTS
     ============================================================ */
     .section-divider {
       display: block;
       width: 48px;
       height: 1px;
-      background: var(--color-gold);
+      background: var(--color-secondary);
       margin: 16px auto 20px;
     }
 
@@ -424,7 +452,7 @@
       display: block;
       width: 32px;
       height: 1px;
-      background: var(--color-gold);
+      background: var(--color-secondary);
       margin: 0 auto 32px;
     }
 
@@ -461,7 +489,7 @@
     }
 
     .nav.scrolled {
-      background: rgba(254, 254, 254, 0.95);
+      background: rgba(255, 255, 255, 0.95);
       backdrop-filter: blur(12px);
       -webkit-backdrop-filter: blur(12px);
       box-shadow: var(--shadow-sm);
@@ -477,11 +505,15 @@
       padding: 0 24px;
     }
 
+    /* Logo wordmark: Sage Green over the dark hero photo (primary brandbook
+       treatment); the brandbook also allows monochrome variants for other
+       backgrounds, so the scrolled (white) nav bar uses the Deep Muted Green
+       variant for visibility against white. */
     .nav-logo {
       font-family: var(--font-heading);
       font-size: 1.6rem;
-      font-weight: 400;
-      color: var(--color-ivory);
+      font-weight: 700;
+      color: var(--color-emerald-light);
       letter-spacing: 0.04em;
       transition: color var(--transition-base);
     }
@@ -501,7 +533,7 @@
       font-weight: 700;
       letter-spacing: 0.12em;
       text-transform: uppercase;
-      color: rgba(250, 247, 242, 0.9);
+      color: rgba(255, 255, 255, 0.9);
       transition: color var(--transition-base);
       position: relative;
     }
@@ -513,7 +545,7 @@
       left: 0;
       right: 0;
       height: 1px;
-      background: var(--color-gold);
+      background: var(--color-secondary);
       transform: scaleX(0);
       transition: transform var(--transition-base);
     }
@@ -529,14 +561,14 @@
 
     .nav-links a:hover,
     .nav-links a.active {
-      color: var(--color-gold);
+      color: var(--color-secondary);
     }
 
     .nav.scrolled .nav-links a:hover { color: var(--color-emerald); }
-    .nav.scrolled .nav-links a.active { color: var(--color-gold); }
+    .nav.scrolled .nav-links a.active { color: var(--color-emerald); }
 
     .nav-cta-btn {
-      background: var(--color-gold) !important;
+      background: var(--color-secondary) !important;
       color: var(--color-charcoal) !important;
       padding: 8px 20px !important;
       border-radius: var(--radius-sm) !important;
@@ -603,8 +635,8 @@
       display: block;
       margin-top: 16px;
       padding: 14px 24px;
-      background: var(--color-emerald);
-      color: var(--color-ivory) !important;
+      background: var(--color-secondary);
+      color: var(--color-charcoal) !important;
       font-size: 0.82rem;
       font-weight: 700;
       letter-spacing: 0.12em;
@@ -615,7 +647,7 @@
       transition: background var(--transition-base);
     }
 
-    .nav-mobile-cta:hover { background: var(--color-emerald-light) !important; color: var(--color-ivory) !important; }
+    .nav-mobile-cta:hover { background: var(--color-gold-light) !important; color: var(--color-charcoal) !important; }
 
     /* ============================================================
        HERO
@@ -629,7 +661,7 @@
       text-align: center;
       position: relative;
       padding: 120px 24px 80px;
-      background-color: #1B4332;
+      background-color: #898F75;
       background-size: cover;
       background-position: center;
       background-attachment: fixed;
@@ -643,7 +675,7 @@
       content: '';
       position: absolute;
       inset: 0;
-      background: radial-gradient(ellipse at 60% 40%, rgba(201, 168, 76, 0.08) 0%, transparent 60%);
+      background: radial-gradient(ellipse at 60% 40%, rgba(182, 197, 154, 0.12) 0%, transparent 60%);
       pointer-events: none;
       z-index: 1;
     }
@@ -673,17 +705,18 @@
     .hero h1 {
       color: var(--color-ivory);
       margin-bottom: 24px;
-      font-weight: 300;
-      font-style: italic;
+      font-weight: 700;
       letter-spacing: 0.01em;
     }
 
     .hero-subheading {
+      font-family: var(--font-subheading);
       font-size: 1.05rem;
-      color: rgba(250, 247, 242, 0.92);
+      color: rgba(255, 255, 255, 0.92);
       max-width: 520px;
       margin: 0 auto 40px;
-      font-weight: 300;
+      font-weight: 600;
+      font-style: italic;
       line-height: 1.8;
     }
 
@@ -703,7 +736,7 @@
       flex-direction: column;
       align-items: center;
       gap: 8px;
-      color: rgba(250, 247, 242, 0.5);
+      color: rgba(255, 255, 255, 0.5);
       font-size: 0.7rem;
       letter-spacing: 0.15em;
       text-transform: uppercase;
@@ -726,7 +759,7 @@
     ============================================================ */
     .about {
       padding: var(--section-padding);
-      background: var(--color-ivory);
+      background: var(--color-accent-b);
     }
 
     .about-grid {
@@ -747,7 +780,7 @@
       aspect-ratio: 3/4;
       border-radius: var(--radius-lg);
       overflow: hidden;
-      background-color: #1B4332;
+      background-color: #898F75;
       background-size: cover;
       background-position: center;
     }
@@ -758,7 +791,7 @@
       right: -20px;
       width: 180px;
       height: 180px;
-      border: 2px solid var(--color-gold);
+      border: 2px solid var(--color-emerald);
       border-radius: var(--radius-md);
       z-index: -1;
     }
@@ -779,7 +812,8 @@
     }
 
     .about-lead {
-      font-family: var(--font-heading);
+      font-family: var(--font-subheading);
+      font-weight: 600;
       font-style: italic;
       font-size: 1.12rem;
       color: var(--color-charcoal);
@@ -817,8 +851,8 @@
     .stat-value {
       font-family: var(--font-heading);
       font-size: 2.2rem;
-      color: var(--color-gold);
-      font-weight: 400;
+      color: var(--color-charcoal);
+      font-weight: 700;
       display: block;
       line-height: 1;
       margin-bottom: 6px;
@@ -837,7 +871,7 @@
     ============================================================ */
     .services {
       padding: var(--section-padding);
-      background: var(--color-emerald);
+      background: var(--color-emerald-light);
     }
 
     .services-header {
@@ -852,14 +886,14 @@
     .services-header-left { flex-shrink: 0; }
 
     .services-header-left h2 {
-      color: var(--color-ivory);
+      color: var(--color-charcoal);
       font-size: clamp(2.4rem, 4vw, 3.6rem);
       line-height: 1.05;
       margin-bottom: 0;
     }
 
     .services-header-left .eyebrow {
-      color: var(--color-gold-light);
+      color: var(--color-charcoal);
       margin-bottom: 12px;
       display: block;
     }
@@ -870,10 +904,11 @@
     }
 
     .services-intro {
-      color: rgba(250, 247, 242, 0.75);
+      color: rgba(44, 44, 44, 0.75);
       line-height: 1.8;
       font-style: italic;
-      font-family: var(--font-heading);
+      font-weight: 600;
+      font-family: var(--font-subheading);
       font-size: 1.2rem;
     }
 
@@ -886,35 +921,35 @@
     }
 
     .service-card {
-      background: rgba(250, 247, 242, 0.06);
-      border: 1px solid rgba(201, 168, 76, 0.25);
-      border-top: 3px solid var(--color-gold);
+      background: var(--color-accent-a);
+      border: 1px solid rgba(137, 143, 117, 0.2);
+      border-top: 3px solid var(--color-secondary);
       border-radius: var(--radius-md);
       padding: 40px 32px;
       transition: all var(--transition-base);
     }
 
     .service-card:hover {
-      background: rgba(250, 247, 242, 0.1);
+      background: var(--color-accent-b);
       transform: translateY(-4px);
-      box-shadow: 0 12px 40px rgba(0, 0, 0, 0.2);
+      box-shadow: 0 12px 40px rgba(44, 44, 44, 0.16);
     }
 
     .service-icon {
       width: 48px;
       height: 48px;
       margin-bottom: 20px;
-      color: var(--color-gold);
+      color: var(--color-emerald);
     }
 
     .service-card h3 {
-      color: var(--color-ivory);
+      color: var(--color-charcoal);
       margin-bottom: 14px;
       font-size: 1.45rem;
     }
 
     .service-card p {
-      color: rgba(250, 247, 242, 0.88);
+      color: var(--color-charcoal-light);
       font-size: 0.95rem;
       line-height: 1.8;
     }
@@ -923,7 +958,7 @@
       text-align: center;
       margin-top: 48px;
       font-size: 0.9rem;
-      color: rgba(250, 247, 242, 0.55);
+      color: rgba(44, 44, 44, 0.65);
       font-style: italic;
     }
 
@@ -955,7 +990,7 @@
       position: relative;
       aspect-ratio: 16/9;
       overflow: hidden;
-      background-color: #1B4332;
+      background-color: #898F75;
     }
 
     .carousel-slide img {
@@ -973,7 +1008,7 @@
       left: 0;
       right: 0;
       padding: 48px 32px 24px;
-      background: linear-gradient(to top, rgba(27, 67, 50, 0.75) 0%, transparent 100%);
+      background: linear-gradient(to top, rgba(30, 34, 24, 0.75) 0%, transparent 100%);
       pointer-events: none;
     }
 
@@ -1006,7 +1041,7 @@
 
     .carousel-btn:hover { background: rgba(250, 247, 242, 0.28); }
     .carousel-btn:focus-visible {
-      outline: 2px solid var(--color-gold);
+      outline: 2px solid var(--color-emerald);
       outline-offset: 2px;
     }
     .carousel-btn svg { width: 20px; height: 20px; stroke: currentColor; }
@@ -1033,7 +1068,7 @@
     }
 
     .carousel-dot.active {
-      background: var(--color-gold);
+      background: var(--color-emerald);
       transform: scale(1.3);
     }
 
@@ -1056,14 +1091,14 @@
       font-weight: 700;
       letter-spacing: 0.14em;
       text-transform: uppercase;
-      color: var(--color-emerald);
-      border-bottom: 1px solid var(--color-gold);
+      color: var(--color-charcoal);
+      border-bottom: 1px solid var(--color-emerald);
       padding-bottom: 2px;
       transition: color var(--transition-base);
     }
 
     .gallery-follow a:hover {
-      color: var(--color-gold);
+      color: var(--color-emerald);
     }
 
     /* ============================================================
@@ -1071,11 +1106,12 @@
     ============================================================ */
     .faq {
       padding: var(--section-padding);
-      background: var(--color-ivory);
+      background: var(--color-accent-b);
     }
 
     .faq-intro {
-      font-family: var(--font-heading);
+      font-family: var(--font-subheading);
+      font-weight: 600;
       font-style: italic;
       font-size: clamp(1.2rem, 2.5vw, 1.55rem);
       color: var(--color-taupe);
@@ -1136,7 +1172,7 @@
     .faq-item.open .faq-icon {
       background: var(--color-emerald);
       border-color: var(--color-emerald);
-      color: var(--color-ivory);
+      color: var(--color-charcoal);
     }
 
     .faq-body {
@@ -1161,11 +1197,11 @@
     ============================================================ */
     .testimonials {
       padding: var(--section-padding);
-      background: var(--color-emerald);
+      background: var(--color-emerald-light);
     }
 
-    .testimonials .section-header h2 { color: var(--color-ivory); }
-    .testimonials .section-header .eyebrow { color: var(--color-gold-light); }
+    .testimonials .section-header h2 { color: var(--color-charcoal); }
+    .testimonials .section-header .eyebrow { color: var(--color-charcoal); }
 
     .testimonials-grid {
       display: block;
@@ -1196,17 +1232,17 @@
     .testimonial-stars svg {
       width: 16px;
       height: 16px;
-      fill: var(--color-gold);
-      color: var(--color-gold);
+      fill: var(--color-charcoal);
+      color: var(--color-charcoal);
     }
 
     .testimonial-quote {
-      font-family: var(--font-heading);
+      font-family: var(--font-subheading);
       font-style: italic;
-      font-weight: 300;
+      font-weight: 600;
       font-size: clamp(1.05rem, 1.8vw, 1.2rem);
       letter-spacing: 0.01em;
-      color: var(--color-ivory);
+      color: var(--color-charcoal);
       line-height: 1.7;
       margin-bottom: 24px;
     }
@@ -1216,12 +1252,12 @@
       font-weight: 700;
       letter-spacing: 0.1em;
       text-transform: uppercase;
-      color: var(--color-gold-light);
+      color: var(--color-charcoal);
     }
 
     .testimonial-date {
       font-size: 0.78rem;
-      color: rgba(250, 247, 242, 0.72);
+      color: rgba(44, 44, 44, 0.65);
       margin-top: 4px;
     }
 
@@ -1230,64 +1266,55 @@
     ============================================================ */
     .contact {
       padding: var(--section-padding);
-      background: var(--color-emerald);
+      background: var(--color-emerald-light);
     }
 
-    /* ---- Contact: scoped overrides for dark background ---- */
-    .contact h3 { color: var(--color-ivory); }
-    .contact-info-tagline { color: rgba(250, 247, 242, 0.65); }
-    .contact .eyebrow { color: var(--color-gold-light); }
-    .contact .section-header h2 { color: var(--color-ivory); }
-    .contact .contact-detail-label { color: rgba(250, 247, 242, 0.55); }
-    .contact .contact-detail-value { color: var(--color-ivory); }
-    .contact .contact-detail-value a { color: var(--color-ivory); }
-    .contact .contact-detail-value a:hover { color: var(--color-gold-light); }
-    .contact .contact-detail-icon { background: rgba(250, 247, 242, 0.1); color: var(--color-gold-light); }
+    /* ---- Contact: scoped overrides for the sage-green section background ---- */
+    .contact h3 { color: var(--color-charcoal); }
+    .contact-info-tagline { color: rgba(44, 44, 44, 0.65); }
+    .contact .eyebrow { color: var(--color-charcoal); }
+    .contact .section-header h2 { color: var(--color-charcoal); }
+    .contact .contact-detail-label { color: rgba(44, 44, 44, 0.6); }
+    .contact .contact-detail-value { color: var(--color-charcoal); }
+    .contact .contact-detail-value a { color: var(--color-charcoal); }
+    .contact .contact-detail-value a:hover { color: var(--color-charcoal-light); }
+    .contact .contact-detail-icon { background: var(--color-accent-a); color: var(--color-emerald); }
     .contact .contact-response-note {
-      background: rgba(250, 247, 242, 0.07);
-      border-left-color: var(--color-gold);
-      color: rgba(250, 247, 242, 0.75);
+      background: var(--color-accent-a);
+      border-left-color: var(--color-secondary);
+      color: var(--color-charcoal-light);
     }
 
-    /* ---- Contact: form fields on dark background ---- */
-    .contact .form-group label { color: rgba(250, 247, 242, 0.7); }
+    /* ---- Contact: form fields on the sage-green section background ---- */
+    .contact .form-group label { color: rgba(44, 44, 44, 0.7); }
     .contact .form-group input,
     .contact .form-group select,
     .contact .form-group textarea {
-      background: rgba(250, 247, 242, 0.08);
-      border-color: rgba(250, 247, 242, 0.2);
-      color: var(--color-ivory);
+      background: var(--color-accent-a);
+      border-color: rgba(44, 44, 44, 0.15);
+      color: var(--color-charcoal);
     }
     .contact .form-group input::placeholder,
-    .contact .form-group textarea::placeholder { color: rgba(250, 247, 242, 0.4); }
+    .contact .form-group textarea::placeholder { color: rgba(44, 44, 44, 0.4); }
     .contact .form-group select option {
-      background: var(--color-emerald);
-      color: var(--color-ivory);
+      background: var(--color-accent-a);
+      color: var(--color-charcoal);
     }
     .contact .form-group input:focus,
     .contact .form-group select:focus,
     .contact .form-group textarea:focus {
-      border-color: var(--color-gold);
-      box-shadow: 0 0 0 3px rgba(201, 168, 76, 0.15);
-      background: rgba(250, 247, 242, 0.12);
+      border-color: var(--color-emerald);
+      box-shadow: 0 0 0 3px rgba(137, 143, 117, 0.15);
+      background: var(--color-accent-a);
     }
     .form-success {
-      background: rgba(250, 247, 242, 0.1);
-      border-color: rgba(201, 168, 76, 0.4);
-      color: var(--color-ivory);
+      background: var(--color-accent-a);
+      border-color: var(--color-secondary);
+      color: var(--color-charcoal);
     }
 
-    /* ---- Contact: submit button — gold on dark bg ---- */
-    .contact .btn-primary {
-      background: var(--color-gold);
-      border-color: var(--color-gold);
-      color: var(--color-charcoal);
-    }
-    .contact .btn-primary:hover {
-      background: var(--color-gold-light);
-      border-color: var(--color-gold-light);
-      color: var(--color-charcoal);
-    }
+    /* Contact section's "Book Now" button uses the base .btn-primary
+       (charcoal/white) treatment — reliable contrast against the sage bg. */
 
     .contact-grid {
       display: grid;
@@ -1304,7 +1331,7 @@
     }
 
     .contact-form-wrap .section-header h2 {
-      color: var(--color-ivory);
+      color: var(--color-charcoal);
     }
 
     .contact-form {
@@ -1352,7 +1379,7 @@
     .form-group select:focus,
     .form-group textarea:focus {
       border-color: var(--color-emerald);
-      box-shadow: 0 0 0 3px rgba(27, 67, 50, 0.08);
+      box-shadow: 0 0 0 3px rgba(137, 143, 117, 0.15);
     }
 
     .form-group textarea {
@@ -1376,8 +1403,8 @@
 
     .form-success {
       display: none;
-      background: rgba(27, 67, 50, 0.08);
-      border: 1px solid rgba(27, 67, 50, 0.2);
+      background: rgba(137, 143, 117, 0.1);
+      border: 1px solid rgba(137, 143, 117, 0.25);
       border-radius: var(--radius-sm);
       padding: 20px 24px;
       color: var(--color-emerald);
@@ -1414,7 +1441,7 @@
     .contact-detail-icon {
       width: 40px;
       height: 40px;
-      background: rgba(27, 67, 50, 0.07);
+      background: rgba(137, 143, 117, 0.12);
       border-radius: 50%;
       display: flex;
       align-items: center;
@@ -1442,8 +1469,8 @@
     .contact-response-note {
       margin-top: 32px;
       padding: 20px;
-      background: rgba(201, 168, 76, 0.08);
-      border-left: 3px solid var(--color-gold);
+      background: rgba(233, 173, 183, 0.12);
+      border-left: 3px solid var(--color-secondary);
       border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
       font-size: 0.88rem;
       color: var(--color-charcoal-light);
@@ -1475,14 +1502,16 @@
 
     .footer-brand .footer-logo {
       font-family: var(--font-heading);
+      font-weight: 700;
       font-size: 1.8rem;
-      color: var(--color-gold-light);
+      color: var(--color-emerald-light);
       display: block;
       margin-bottom: 10px;
     }
 
     .footer-tagline {
-      font-family: var(--font-heading);
+      font-family: var(--font-subheading);
+      font-weight: 600;
       font-style: italic;
       font-size: 1rem;
       color: rgba(250, 247, 242, 0.55);
@@ -1504,7 +1533,7 @@
       transition: color var(--transition-base);
     }
 
-    .footer-nav a:hover { color: var(--color-gold); }
+    .footer-nav a:hover { color: var(--color-secondary); }
 
     .footer-social {
       display: flex;
@@ -1526,8 +1555,8 @@
     }
 
     .footer-social-link:hover {
-      border-color: var(--color-gold);
-      color: var(--color-gold);
+      border-color: var(--color-secondary);
+      color: var(--color-secondary);
     }
 
     .footer-social-link svg { width: 18px; height: 18px; }
@@ -1600,7 +1629,7 @@
     ============================================================ */
     .booking {
       padding: var(--section-padding);
-      background: var(--color-ivory);
+      background: var(--color-accent-b);
     }
 
     .booking .section-header {
@@ -1624,7 +1653,7 @@
     .calendly-placeholder-icon {
       width: 56px;
       height: 56px;
-      color: var(--color-gold);
+      color: var(--color-emerald);
       margin: 0 auto 24px;
       display: block;
     }
@@ -1632,7 +1661,7 @@
     .calendly-placeholder-heading {
       font-family: var(--font-heading);
       font-size: clamp(1.6rem, 3vw, 2.2rem);
-      font-weight: 400;
+      font-weight: 700;
       color: var(--color-emerald);
       margin-bottom: 16px;
     }
@@ -1669,9 +1698,9 @@
     ============================================================ */
     .contact-simple-grid {
       display: grid;
-      grid-template-columns: repeat(4, 1fr);
+      grid-template-columns: repeat(5, 1fr);
       gap: 32px;
-      max-width: 900px;
+      max-width: 1040px;
       margin: 0 auto;
     }
 
@@ -1700,7 +1729,7 @@
       font-weight: 700;
       letter-spacing: 0.18em;
       text-transform: uppercase;
-      color: var(--color-gold);
+      color: var(--color-secondary);
       text-align: center;
       margin-bottom: 20px;
     }
@@ -1829,10 +1858,10 @@
     <section class="hero" id="home" aria-label="Hero">
       <!-- REPLACE: hero image — set as CSS background-image on .hero or add <img> -->
       <div class="hero-content">
-        <span class="eyebrow" id="hero-eyebrow">Las Vegas Bridal Makeup Artist</span>
+        <span class="eyebrow" id="hero-eyebrow">Luxury Mobile Bridal Makeup Studio · Las Vegas</span>
         <h1 id="hero-heading">Your Wedding Day Begins Here</h1>
         <p class="hero-subheading" id="hero-subheading">
-          Luxury bridal beauty for your most unforgettable day.
+          Emerald Bride is a luxury mobile bridal makeup studio based in Las Vegas, dedicated to creating timeless bridal looks with convenience and elegance.
         </p>
         <div class="hero-ctas">
           <a href="#booking" class="btn btn-primary">Book Now</a>
@@ -1859,11 +1888,11 @@
         </div>
 
         <div class="about-text">
-          <span class="eyebrow fade-in">The Artist</span>
-          <h2 class="fade-in fade-in-delay-1" id="about-heading">Meet the Artist</h2>
+          <span class="eyebrow fade-in">Our Story</span>
+          <h2 class="fade-in fade-in-delay-1" id="about-heading">About Emerald Bride</h2>
 
           <p class="fade-in fade-in-delay-2" id="about-p1">
-            With over a decade of luxury bridal experience in Las Vegas, I create polished, long-wear looks tailored entirely to you — from intimate elopements to grand ballroom affairs. Available for destination weddings worldwide.
+            Every bride deserves to feel confident, radiant, and completely herself on one of the most important days of her life. Emerald Bride was created to redefine the bridal beauty experience by bringing luxury makeup services directly to brides. Inspired by the timeless elegance of the emerald gemstone—a symbol of love, renewal, prosperity, and everlasting commitment—the brand transforms every bridal preparation into a calm, intimate, and unforgettable journey. More than applying makeup, Emerald Bride creates moments of confidence, elegance, and joy that become part of every bride's story.
           </p>
 
           <div class="about-stats fade-in">
@@ -1963,7 +1992,7 @@
       <div class="container">
         <div class="gallery-follow fade-in">
           <a href="https://www.instagram.com/emeraldbride" target="_blank" rel="noopener noreferrer" aria-label="Follow Emerald Bride on Instagram">
-            Follow along on Instagram @emeraldbride
+            Follow along on Instagram @Emerald_Bride
           </a>
         </div>
       </div>
@@ -2055,7 +2084,7 @@
             </p>
 
             <div class="calendly-placeholder-actions">
-              <a href="mailto:hello@emeraldbride.com" class="btn btn-primary">
+              <a href="mailto:support@emeraldbride.com" class="btn btn-primary">
                 Email to Book
               </a>
               <a href="https://www.instagram.com/emeraldbride"
@@ -2090,13 +2119,27 @@
             <div class="contact-simple-item">
               <div class="contact-detail-icon" aria-hidden="true">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M2.25 6.75c0 8.284 6.716 15 15 15h1.5a2.25 2.25 0 002.25-2.25v-1.372c0-.516-.351-.966-.852-1.091l-4.423-1.106c-.44-.11-.902.055-1.173.417l-.97 1.293c-.282.376-.769.542-1.21.38a12.035 12.035 0 01-7.143-7.143c-.162-.441.004-.928.38-1.21l1.293-.97c.363-.271.527-.734.417-1.173L6.963 3.102a1.125 1.125 0 00-1.091-.852H4.5A2.25 2.25 0 002.25 4.5v2.25z" />
+                </svg>
+              </div>
+              <div>
+                <div class="contact-detail-label">Phone</div>
+                <div class="contact-detail-value" id="contact-phone">
+                  <a href="tel:+17253004543">(725) 300-4543</a>
+                </div>
+              </div>
+            </div>
+
+            <div class="contact-simple-item">
+              <div class="contact-detail-icon" aria-hidden="true">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
                   <path stroke-linecap="round" stroke-linejoin="round" d="M21.75 6.75v10.5a2.25 2.25 0 01-2.25 2.25h-15a2.25 2.25 0 01-2.25-2.25V6.75m19.5 0A2.25 2.25 0 0019.5 4.5h-15a2.25 2.25 0 00-2.25 2.25m19.5 0v.243a2.25 2.25 0 01-1.07 1.916l-7.5 4.615a2.25 2.25 0 01-2.36 0L3.32 8.91a2.25 2.25 0 01-1.07-1.916V6.75" />
                 </svg>
               </div>
               <div>
                 <div class="contact-detail-label">Email</div>
                 <div class="contact-detail-value" id="contact-email">
-                  <a href="mailto:hello@emeraldbride.com">hello@emeraldbride.com</a>
+                  <a href="mailto:support@emeraldbride.com">support@emeraldbride.com</a>
                 </div>
               </div>
             </div>
@@ -2111,7 +2154,7 @@
               <div>
                 <div class="contact-detail-label">Instagram</div>
                 <div class="contact-detail-value" id="contact-instagram">
-                  <a href="https://www.instagram.com/emeraldbride" target="_blank" rel="noopener noreferrer">@emeraldbride</a>
+                  <a href="https://www.instagram.com/emeraldbride" target="_blank" rel="noopener noreferrer">@Emerald_Bride</a>
                 </div>
               </div>
             </div>
@@ -2161,7 +2204,7 @@
       <div class="footer-top">
         <div class="footer-brand">
           <a href="#home" class="footer-logo">Emerald Bride</a>
-          <p class="footer-tagline">Effortless Elegance for Your Most Beautiful Day</p>
+          <p class="footer-tagline">Timeless Bridal Looks with Convenience and Elegance</p>
         </div>
 
         <nav class="footer-nav" aria-label="Footer navigation">
@@ -2208,7 +2251,7 @@
       <div class="footer-bottom">
         <p class="footer-copyright">&copy; <span id="copyright-year">2025</span> Emerald Bride. All rights reserved.</p>
         <a href="./admin.html" class="footer-admin-link">Admin</a>
-        <p class="footer-location">Las Vegas Bridal Makeup Artist &middot; Available Worldwide</p>
+        <p class="footer-location">Luxury Mobile Bridal Makeup Studio &middot; Las Vegas, Nevada</p>
       </div>
     </div>
   </footer>
@@ -2229,14 +2272,14 @@
     // ============================================================
     const DEFAULTS = {
       hero: {
-        eyebrow: 'Las Vegas Bridal Makeup Artist',
+        eyebrow: 'Luxury Mobile Bridal Makeup Studio · Las Vegas',
         heading: 'Your Wedding Day Begins Here',
-        subheading: 'Luxury bridal beauty for your most unforgettable day.',
+        subheading: 'Emerald Bride is a luxury mobile bridal makeup studio based in Las Vegas, dedicated to creating timeless bridal looks with convenience and elegance.',
         imageUrl: ''
       },
       about: {
-        heading: 'Meet the Artist',
-        p1: 'With over a decade of luxury bridal experience in Las Vegas, I create polished, long-wear looks tailored entirely to you — from intimate elopements to grand ballroom affairs. Available for destination weddings worldwide.',
+        heading: 'About Emerald Bride',
+        p1: 'Every bride deserves to feel confident, radiant, and completely herself on one of the most important days of her life. Emerald Bride was created to redefine the bridal beauty experience by bringing luxury makeup services directly to brides. Inspired by the timeless elegance of the emerald gemstone—a symbol of love, renewal, prosperity, and everlasting commitment—the brand transforms every bridal preparation into a calm, intimate, and unforgettable journey. More than applying makeup, Emerald Bride creates moments of confidence, elegance, and joy that become part of every bride\'s story.',
         p2: '',
         p3: '',
         stat1Value: '200+', stat1Label: 'Brides',
@@ -2321,11 +2364,12 @@
         { quote: 'I have sensitive skin and was nervous about heavy makeup — she made every product choice with such care and intention. My look lasted from 8am through midnight and I felt beautiful every single moment. Worth every penny.', name: 'Natalia V.', date: 'March Wedding' }
       ],
       contact: {
-        email: 'hello@emeraldbride.com',
-        instagram: '@emeraldbride',
+        email: 'support@emeraldbride.com',
+        instagram: '@Emerald_Bride',
+        instagramUrl: 'https://www.instagram.com/emeraldbride',
         location: 'Las Vegas, Nevada · Destination Available',
         responseNote: 'I respond to all inquiries within 24–48 hours. For urgent requests or same-week bookings, feel free to reach out directly via Instagram.',
-        tagline: 'Based in Las Vegas · Available Worldwide'
+        tagline: 'Timeless Bridal Looks with Convenience and Elegance'
       }
     };
 
@@ -2639,8 +2683,8 @@
       }
       const igEl = document.getElementById('contact-instagram');
       if (igEl) {
-        const handle = d.instagram.replace('@', '');
-        igEl.innerHTML = `<a href="https://www.instagram.com/${handle}" target="_blank" rel="noopener noreferrer">${d.instagram}</a>`;
+        const url = d.instagramUrl || ('https://www.instagram.com/' + d.instagram.replace('@', ''));
+        igEl.innerHTML = `<a href="${url}" target="_blank" rel="noopener noreferrer">${d.instagram}</a>`;
       }
     }
 
