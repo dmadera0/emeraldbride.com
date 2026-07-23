@@ -1121,6 +1121,11 @@
               <label class="dz-url-label" for="h-image-url">Or paste a hosted URL</label>
               <input class="field-input" type="url" id="h-image-url" placeholder="https://your-cdn.com/hero.jpg" />
             </div>
+            <button type="button" id="hero-s3-library-toggle" class="btn-save" style="margin-top:12px;">Select hero image from S3 library</button>
+            <div id="hero-s3-library-panel" style="display:none; margin-top:16px;">
+              <div id="hero-s3-library-status" style="font-size:0.82rem; color:var(--color-taupe); margin-bottom:12px;"></div>
+              <div id="hero-s3-library-grid" style="display:flex; flex-wrap:wrap; gap:12px;"></div>
+            </div>
             <p class="field-hint" style="margin-top:6px;">
               ℹ After AWS setup, your images folder is at:
               <code style="font-size:0.8rem; background:var(--color-nested-bg); padding:2px 6px; border-radius:3px;">https://emeraldbride.com/images/your-photo.jpg</code>
@@ -2544,8 +2549,97 @@
           actions.appendChild(toggleBtn);
         }
 
+        const heroBtn = document.createElement('button');
+        heroBtn.type        = 'button';
+        heroBtn.textContent = 'Use as Hero';
+        heroBtn.style.cssText = 'flex:1;font-size:0.72rem;padding:3px 0;border:none;border-radius:3px;background:var(--color-primary-b);color:#fff;cursor:pointer;';
+        heroBtn.addEventListener('click', () => {
+          const urlInput = document.getElementById('h-image-url');
+          const hiddenInput = document.getElementById('h-image');
+          if (urlInput) urlInput.value = photo.url;
+          if (hiddenInput) hiddenInput.value = photo.url;
+          if (dzHero) dzHero.setImage(photo.url, photo.filename);
+          showToast('Hero image selected from S3');
+        });
+        actions.appendChild(heroBtn);
+
         info.appendChild(name);
         info.appendChild(badge);
+        info.appendChild(actions);
+        card.appendChild(img);
+        card.appendChild(info);
+        gridEl.appendChild(card);
+      });
+    }
+
+    async function loadHeroPhotoLibrary() {
+      const statusEl = document.getElementById('hero-s3-library-status');
+      const gridEl   = document.getElementById('hero-s3-library-grid');
+      if (!statusEl || !gridEl) return;
+      statusEl.textContent = 'Loading…';
+      gridEl.innerHTML = '';
+
+      let s3Photos = [];
+      try {
+        const res = await fetch(LIST_GALLERY_URL);
+        if (!res.ok) throw new Error('HTTP ' + res.status);
+        s3Photos = await res.json();
+      } catch (err) {
+        statusEl.textContent = '⚠ Could not load hero photo library: ' + err.message;
+        return;
+      }
+
+      const currentUrl = document.getElementById('h-image')?.value || document.getElementById('h-image-url')?.value || '';
+      statusEl.textContent = `${s3Photos.length} photo${s3Photos.length !== 1 ? 's' : ''} in S3`;
+      renderHeroPhotoLibrary(s3Photos, currentUrl);
+    }
+
+    function renderHeroPhotoLibrary(s3Photos, currentUrl) {
+      const gridEl = document.getElementById('hero-s3-library-grid');
+      if (!gridEl) return;
+      gridEl.innerHTML = '';
+
+      if (!s3Photos.length) {
+        gridEl.innerHTML = '<p style="color:var(--color-taupe);font-size:0.85rem;">No photos found in images/gallery/</p>';
+        return;
+      }
+
+      s3Photos.forEach(photo => {
+        const card = document.createElement('div');
+        card.style.cssText = 'width:160px;flex-shrink:0;border:1px solid #E9DCD3;border-radius:6px;overflow:hidden;background:#fff;display:flex;flex-direction:column;';
+
+        const img = document.createElement('img');
+        img.src   = photo.url;
+        img.alt   = photo.filename;
+        img.style.cssText = 'width:160px;height:100px;object-fit:cover;display:block;';
+
+        const info = document.createElement('div');
+        info.style.cssText = 'padding:6px 8px;flex:1;display:flex;flex-direction:column;gap:4px;';
+
+        const name = document.createElement('div');
+        name.textContent = photo.filename;
+        name.style.cssText = 'font-size:0.72rem;color:var(--color-charcoal);word-break:break-all;line-height:1.3;';
+
+        const actions = document.createElement('div');
+        actions.style.cssText = 'display:flex;gap:4px;margin-top:auto;padding-top:4px;';
+
+        const selectBtn = document.createElement('button');
+        selectBtn.type = 'button';
+        selectBtn.textContent = photo.url === currentUrl ? 'Selected' : 'Use as Hero';
+        selectBtn.disabled = photo.url === currentUrl;
+        selectBtn.style.cssText = `flex:1;font-size:0.72rem;padding:3px 0;border:none;border-radius:3px;background:${photo.url === currentUrl ? '#aaa' : 'var(--color-primary-b)'};color:#fff;cursor:pointer;`;
+        selectBtn.addEventListener('click', () => {
+          const urlInput = document.getElementById('h-image-url');
+          const hiddenInput = document.getElementById('h-image');
+          if (urlInput) urlInput.value = photo.url;
+          if (hiddenInput) hiddenInput.value = photo.url;
+          if (dzHero) dzHero.setImage(photo.url, photo.filename);
+          showToast('Hero image selected from S3');
+          renderHeroPhotoLibrary(s3Photos, photo.url);
+        });
+
+        actions.appendChild(selectBtn);
+        info.appendChild(name);
         info.appendChild(actions);
         card.appendChild(img);
         card.appendChild(info);
@@ -2585,6 +2679,22 @@
             s3Panel.style.display = 'block';
             s3Toggle.textContent  = '▼ S3 Photo Library';
             loadPhotoLibrary();
+          }
+        });
+      }
+
+      const heroS3Toggle = document.getElementById('hero-s3-library-toggle');
+      const heroS3Panel  = document.getElementById('hero-s3-library-panel');
+      if (heroS3Toggle && heroS3Panel) {
+        heroS3Toggle.addEventListener('click', () => {
+          const isOpen = heroS3Panel.style.display !== 'none';
+          if (isOpen) {
+            heroS3Panel.style.display = 'none';
+            heroS3Toggle.textContent = 'Select hero image from S3 library';
+          } else {
+            heroS3Panel.style.display = 'block';
+            heroS3Toggle.textContent = 'Hide S3 hero photo library';
+            loadHeroPhotoLibrary();
           }
         });
       }
