@@ -9,7 +9,8 @@ Production-ready website for a Las Vegas bridal makeup artist. Pure HTML/CSS/JS 
 ```
 emeraldbride.com/
 ├── index.html       # Public-facing website (single page)
-├── admin.html       # Password-protected content management panel
+├── admin.html       # Google OAuth-protected content management panel
+├── auth.js          # Frontend Google OAuth helper used by admin.html
 ├── aws-setup.md     # Step-by-step AWS deployment guide
 ├── sitemap.xml      # XML sitemap with image entries for Google indexing
 ├── robots.txt       # Crawler rules — disallows /admin.html
@@ -53,7 +54,7 @@ Logo, tagline, navigation links, social icons (Instagram, Pinterest), copyright 
 
 ## Admin Panel (admin.html)
 
-Password-protected content management interface. Opens at `/admin.html`.
+Google OAuth-protected content management interface. Opens at `/admin.html`. Sign-in requires a Google account on the server-side allowlist (see `aws-setup.md` section 7) — there is no password.
 
 The admin panel saves all content to `localStorage` in the browser. The public `index.html` reads from the same `localStorage` on every page load. This means content changes made in admin are immediately visible on the site in the same browser.
 
@@ -165,11 +166,11 @@ CloudFront ─────────┤
 
 ### Upgrade steps
 
-**1. Real admin authentication**
-Replace the hardcoded password in `admin.html` with a Cognito User Pool or a custom JWT flow:
-- `POST /api/admin/login` validates credentials, returns a signed JWT
-- Admin panel stores JWT in memory and sends it as `Authorization: Bearer <token>` on every request
-- Lambda middleware validates the JWT on protected endpoints
+**1. Real admin authentication — done**
+Implemented as Google OAuth 2.0 (see `aws-setup.md` section 7, and `auth_lib.py`/`oauth_callback.py`/`oauth_verify.py`/`oauth_logout.py`/`auth.js`):
+- `POST /oauth-callback` exchanges a Google authorization code for a signed JWT, set as an httpOnly session cookie
+- The browser sends the cookie automatically (`credentials: 'include'`) — the admin panel never holds the token itself
+- Every protected Lambda endpoint validates the session via `auth_lib.require_auth(event)`
 
 **2. Content database**
 Replace `localStorage` with API calls backed by DynamoDB or RDS:

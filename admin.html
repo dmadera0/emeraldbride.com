@@ -142,35 +142,6 @@
 
     .login-form { display: flex; flex-direction: column; gap: 16px; }
 
-    .login-form label {
-      font-size: 0.72rem;
-      font-weight: 700;
-      letter-spacing: 0.1em;
-      text-transform: uppercase;
-      color: var(--color-taupe);
-      display: block;
-      margin-bottom: 6px;
-      text-align: left;
-    }
-
-    .login-form input {
-      width: 100%;
-      font-family: var(--font-body);
-      font-size: 0.97rem;
-      color: var(--color-charcoal);
-      background: var(--color-input-bg);
-      border: 1px solid var(--color-input-border);
-      border-radius: var(--radius-sm);
-      padding: 12px 16px;
-      outline: none;
-      transition: border-color var(--transition-base), box-shadow var(--transition-base);
-    }
-
-    .login-form input:focus {
-      border-color: var(--color-secondary);
-      box-shadow: 0 0 0 3px rgba(233, 173, 183, 0.3);
-    }
-
     .login-btn {
       background: var(--color-charcoal);
       color: var(--color-accent-a);
@@ -185,6 +156,22 @@
     }
 
     .login-btn:hover { background: var(--color-primary-a); color: var(--color-charcoal); }
+
+    .login-btn.google-btn {
+      background: var(--color-accent-a);
+      color: var(--color-charcoal);
+      border: 1px solid var(--color-input-border);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      text-transform: none;
+      letter-spacing: 0.02em;
+    }
+
+    .login-btn.google-btn:hover { background: var(--color-nested-bg); color: var(--color-charcoal); }
+
+    .login-btn.google-btn:disabled { opacity: 0.6; cursor: default; }
 
     .login-error {
       font-size: 0.82rem;
@@ -975,14 +962,18 @@
       <span class="login-logo" id="login-title">Emerald Bride</span>
       <p class="login-subtitle">Admin Panel</p>
 
-      <form class="login-form" id="login-form" novalidate>
-        <div>
-          <label for="login-password">Password</label>
-          <input type="password" id="login-password" autocomplete="current-password" placeholder="Enter admin password" required />
-        </div>
-        <button type="submit" class="login-btn">Sign In</button>
+      <div class="login-form" id="login-status">
+        <button type="button" class="login-btn google-btn" id="google-login-btn">
+          <svg viewBox="0 0 18 18" width="18" height="18" aria-hidden="true" focusable="false">
+            <path fill="#4285F4" d="M17.64 9.2c0-.64-.06-1.25-.16-1.84H9v3.48h4.84a4.14 4.14 0 01-1.8 2.72v2.26h2.9c1.7-1.57 2.7-3.88 2.7-6.62z"/>
+            <path fill="#34A853" d="M9 18c2.43 0 4.47-.8 5.96-2.18l-2.9-2.26c-.8.54-1.83.86-3.06.86-2.35 0-4.34-1.59-5.05-3.72H.98v2.33A9 9 0 009 18z"/>
+            <path fill="#FBBC05" d="M3.95 10.7A5.4 5.4 0 013.68 9c0-.59.1-1.17.27-1.7V4.97H.98A9 9 0 000 9c0 1.45.35 2.83.98 4.03l2.97-2.33z"/>
+            <path fill="#EA4335" d="M9 3.58c1.32 0 2.51.46 3.44 1.35l2.58-2.58C13.46.89 11.43 0 9 0A9 9 0 00.98 4.97l2.97 2.33C4.66 5.17 6.65 3.58 9 3.58z"/>
+          </svg>
+          Continue with Google
+        </button>
         <p class="login-error" id="login-error" role="alert" aria-live="polite"></p>
-      </form>
+      </div>
     </div>
   </div>
 
@@ -1035,6 +1026,7 @@
       </nav>
 
       <div class="sidebar-footer">
+        <span class="sidebar-role" id="sidebar-user-email" style="word-break:break-all;"></span>
         <a href="index.html" class="sidebar-view-btn" target="_blank" rel="noopener">↗ View Live Site</a>
         <button class="sidebar-logout" id="logout-btn">Sign Out</button>
       </div>
@@ -1362,6 +1354,7 @@
   <!-- TOAST -->
   <div class="toast" id="toast" role="status" aria-live="polite"></div>
 
+  <script src="auth.js"></script>
   <script>
     // DATA LAYER — replace localStorage calls here with API calls when backend is ready
     // Suggested future endpoints:
@@ -1371,47 +1364,61 @@
     //   POST /api/gallery/upload (replace S3 presigned URL flow)
 
     // ============================================================
-    // AUTH
-    // TODO: Replace with POST /api/admin/login when backend is ready
+    // AUTH — Google OAuth via emeraldbride-oauth-callback / -verify / -logout
+    // Session lives in an httpOnly cookie (see auth.js); this page only ever
+    // asks "am I authenticated?" — it never holds the token itself.
     // ============================================================
-    const ADMIN_PASSWORD = 'emerald2025';
+    const loginOverlay   = document.getElementById('login-overlay');
+    const adminWrap      = document.getElementById('admin-wrap');
+    const loginError      = document.getElementById('login-error');
+    const googleLoginBtn  = document.getElementById('google-login-btn');
+    const logoutBtn       = document.getElementById('logout-btn');
+    const sidebarUserEmail = document.getElementById('sidebar-user-email');
 
-    const loginOverlay = document.getElementById('login-overlay');
-    const adminWrap    = document.getElementById('admin-wrap');
-    const loginForm    = document.getElementById('login-form');
-    const loginError   = document.getElementById('login-error');
-    const logoutBtn    = document.getElementById('logout-btn');
-
-    function checkAuth() {
-      if (sessionStorage.getItem('eb_admin') === '1') {
-        loginOverlay.classList.add('hidden');
-        adminWrap.classList.remove('hidden');
-        initAdmin();
-      }
+    function showAdmin(email) {
+      loginOverlay.classList.add('hidden');
+      adminWrap.classList.remove('hidden');
+      if (sidebarUserEmail) sidebarUserEmail.textContent = email || '';
+      initAdmin();
     }
 
-    loginForm.addEventListener('submit', e => {
-      e.preventDefault();
-      const pw = document.getElementById('login-password').value;
-      if (pw === ADMIN_PASSWORD) {
-        sessionStorage.setItem('eb_admin', '1');
-        loginError.textContent = '';
-        loginOverlay.classList.add('hidden');
-        adminWrap.classList.remove('hidden');
-        initAdmin();
-      } else {
-        loginError.textContent = 'Incorrect password. Please try again.';
-        document.getElementById('login-password').value = '';
-        document.getElementById('login-password').focus();
-      }
+    function showLogin(message) {
+      adminWrap.classList.add('hidden');
+      loginOverlay.classList.remove('hidden');
+      loginError.textContent = message || '';
+    }
+
+    googleLoginBtn.addEventListener('click', () => {
+      googleLoginBtn.disabled = true;
+      googleLoginBtn.textContent = 'Redirecting to Google…';
+      window.EBAuth.redirectToGoogleLogin();
     });
 
     logoutBtn.addEventListener('click', () => {
-      sessionStorage.removeItem('eb_admin');
-      adminWrap.classList.add('hidden');
-      loginOverlay.classList.remove('hidden');
-      document.getElementById('login-password').value = '';
+      window.EBAuth.logout();
     });
+
+    async function checkAuth() {
+      // A fresh redirect back from Google takes priority over the normal
+      // "am I already logged in" check — it carries a one-time code that
+      // must be exchanged before it's discarded from the URL.
+      if (window.EBAuth.isOAuthRedirect()) {
+        const result = await window.EBAuth.handleOAuthCallback();
+        if (result.ok) {
+          showAdmin(result.email);
+          return;
+        }
+        showLogin(result.message);
+        return;
+      }
+
+      const auth = await window.EBAuth.isAuthenticated();
+      if (auth.ok) {
+        showAdmin(auth.email);
+      } else {
+        showLogin('');
+      }
+    }
 
     const UPLOAD_API_URL   = 'https://sg0k9b4ggd.execute-api.us-east-1.amazonaws.com/prod/presign-upload';
     const SAVE_STATE_URL   = 'https://sg0k9b4ggd.execute-api.us-east-1.amazonaws.com/prod/save-gallery-state';
@@ -1631,7 +1638,7 @@
               .replace(/\s+/g, '-')
               .replace(/[^a-z0-9._-]/g, '');
             const filename = `${Date.now()}-${sanitized}`;
-            const presignRes = await fetch(`${UPLOAD_API_URL}?filename=${encodeURIComponent(filename)}`);
+            const presignRes = await fetch(`${UPLOAD_API_URL}?filename=${encodeURIComponent(filename)}`, { credentials: 'include' });
             if (!presignRes.ok) throw new Error('Failed to get upload URL');
             const { uploadUrl, publicUrl } = await presignRes.json();
             const putRes = await fetch(uploadUrl, {
@@ -1781,6 +1788,7 @@
         showToast('Saving…');
         const res = await fetch(SAVE_HERO_URL, {
           method: 'POST',
+          credentials: 'include',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify(heroData)
         });
@@ -2066,7 +2074,7 @@
               .replace(/[^a-z0-9._-]/g, '');
             const filename = `${Date.now()}-${sanitized}`;
 
-            const presignRes = await fetch(`${UPLOAD_API_URL}?filename=${encodeURIComponent(filename)}`);
+            const presignRes = await fetch(`${UPLOAD_API_URL}?filename=${encodeURIComponent(filename)}`, { credentials: 'include' });
             if (!presignRes.ok) throw new Error('Failed to get upload URL');
             const { uploadUrl, publicUrl } = await presignRes.json();
 
@@ -2243,6 +2251,7 @@
         showToast('Saving…');
         const res = await fetch(SAVE_STATE_URL, {
           method: 'POST',
+          credentials: 'include',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ gallery: saved })
         });
@@ -2458,7 +2467,7 @@
 
       let s3Photos = [];
       try {
-        const res = await fetch(LIST_GALLERY_URL);
+        const res = await fetch(LIST_GALLERY_URL, { credentials: 'include' });
         if (!res.ok) throw new Error('HTTP ' + res.status);
         s3Photos = await res.json();
       } catch (err) {
@@ -2559,7 +2568,7 @@
           if (urlInput) urlInput.value = photo.url;
           if (hiddenInput) hiddenInput.value = photo.url;
           if (dzHero) dzHero.setImage(photo.url, photo.filename);
-          showToast('Hero image selected from Gallery');
+          showToast('Hero image selected from gallery');
         });
         actions.appendChild(heroBtn);
 
@@ -2581,7 +2590,7 @@
 
       let s3Photos = [];
       try {
-        const res = await fetch(LIST_GALLERY_URL);
+        const res = await fetch(LIST_GALLERY_URL, { credentials: 'include' });
         if (!res.ok) throw new Error('HTTP ' + res.status);
         s3Photos = await res.json();
       } catch (err) {

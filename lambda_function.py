@@ -4,6 +4,8 @@ import os
 import boto3
 from botocore.exceptions import ClientError
 
+from auth_lib import require_auth
+
 BUCKET = "emeraldbride-site"
 CLOUDFRONT_BASE = "https://d27ppwg0xrr4g5.cloudfront.net"
 ALLOWED_ORIGINS = {
@@ -46,11 +48,19 @@ def lambda_handler(event, context):
     cors_headers = {
         "Access-Control-Allow-Origin": cors_origin,
         "Access-Control-Allow-Methods": "GET,OPTIONS",
-        "Access-Control-Allow-Headers": "Content-Type",
+        "Access-Control-Allow-Headers": "Content-Type,Authorization",
+        "Access-Control-Allow-Credentials": "true",
     }
 
     if event.get("requestContext", {}).get("http", {}).get("method") == "OPTIONS":
         return {"statusCode": 200, "headers": cors_headers, "body": ""}
+
+    if not require_auth(event):
+        return {
+            "statusCode": 401,
+            "headers": {**cors_headers, "Content-Type": "application/json"},
+            "body": json.dumps({"error": "Unauthorized"}),
+        }
 
     params = event.get("queryStringParameters") or {}
     raw_filename = params.get("filename", "").strip()

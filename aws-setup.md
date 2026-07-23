@@ -274,63 +274,18 @@ aws cloudfront create-invalidation \
 
 ---
 
-## 7. admin.html Access Control (MVP)
+## 7. admin.html Access Control
 
-### Current state
-`admin.html` is protected only by the client-side password check in JavaScript. The file itself is publicly accessible at `emeraldbride.com/admin.html` if someone knows the URL. The hardcoded password (`emerald2025`) is the only gate.
+### Current state (Google OAuth)
+`admin.html` is gated by Google OAuth 2.0, not a shared password. Signing in requires a real Google account that's on an allowlist (specific emails and/or a Google Workspace domain) checked server-side by `emeraldbride-oauth-callback` — Google authenticating someone only proves who they are, not that they're allowed to administer this site, so the allowlist check is what actually authorizes them. A successful login gets a signed (HMAC-SHA256), httpOnly, `SameSite=None; Secure` session cookie with an 8-hour TTL; the token is never readable by page JavaScript.
 
-**For MVP, this is acceptable.** The password prevents casual access, and the data it controls (localStorage) lives in the browser anyway.
+Every content-mutating API endpoint (`presign-upload`, `save-gallery-state`, `save-hero-state`, `list-gallery`) independently verifies that session cookie via `auth_lib.require_auth()` before doing anything — gating only the HTML page and leaving the API open would mean anyone who found the API Gateway URL (which ships in the page's own JS) could bypass the login screen entirely.
 
-### Recommended upgrade before going live with real client data
+Relevant files: `auth_lib.py` (shared JWT/allowlist helpers, bundled into every Lambda zip), `oauth_callback.py`, `oauth_verify.py`, `oauth_logout.py`, `auth.js` (frontend), and the auth checks added to the four existing content Lambdas. Deployment (including required env vars) is documented in the docstring at the top of `deploy_upload_lambda.py`.
 
-Add a **CloudFront Function** (runs at the edge, free tier: 2M requests/month) that checks HTTP Basic Auth on `/admin.html` before the request ever reaches S3.
+### Optional extra layer
 
----
-
-### Future upgrade — CloudFront Function for admin protection
-
-> **This is a future upgrade, not required for MVP.**
-> 
-> Create this as a CloudFront Function in the AWS Console (CloudFront → Functions → Create function), then associate it with your distribution's viewer request event for the path `/admin.html`.
-
-```javascript
-// CloudFront Function — Basic Auth gate for /admin.html
-// Replace ENCODED_CREDENTIALS with: btoa("admin:YOUR_STRONG_PASSWORD")
-// Generate it in your browser console: btoa("admin:securepassword123")
-
-function handler(event) {
-  var request = event.request;
-  var headers = request.headers;
-
-  // Only protect admin.html
-  if (request.uri !== '/admin.html') {
-    return request;
-  }
-
-  var ENCODED_CREDENTIALS = 'YWRtaW46ZW1lcmFsZDIwMjU='; // admin:emerald2025 (change this)
-
-  var authHeader = headers.authorization;
-
-  if (!authHeader || authHeader.value !== 'Basic ' + ENCODED_CREDENTIALS) {
-    return {
-      statusCode: 401,
-      statusDescription: 'Unauthorized',
-      headers: {
-        'www-authenticate': { value: 'Basic realm="Emerald Bride Admin"' }
-      }
-    };
-  }
-
-  return request;
-}
-```
-
-**To associate with your distribution:**
-1. CloudFront → Your distribution → Behaviors
-2. Create a new behavior: Path pattern `/admin.html`
-3. Viewer request → Function associations → CloudFront Functions → select your function
-
-This adds a second layer of protection (HTTP Basic Auth in the browser prompt) before any request reaches S3.
+A CloudFront Function doing HTTP Basic Auth in front of `/admin.html` (edge-layer, before the request even reaches S3/OAuth) is still a reasonable belt-and-suspenders addition if you want defense in depth beyond OAuth — see CloudFront → Functions in the AWS Console if you want to add one. Not required now that real authentication is in place.
 
 ---
 
@@ -423,11 +378,10 @@ CloudFront ─────────┤
 - Lambda saves the returned CloudFront URL to the database
 - The admin panel already has a comment marking exactly where this flow replaces the URL input field
 
-**4. Real admin authentication**
-- Replace hardcoded password with Cognito User Pools or a custom JWT flow
-- `POST /api/admin/login` validates credentials, returns a JWT
-- Admin panel stores JWT and sends it as `Authorization: Bearer <token>` on subsequent requests
-- Lambda middleware validates the JWT on every protected endpoint
+**4. Real admin authentication — done**
+- Implemented as Google OAuth 2.0 rather than Cognito or a custom login form — see section 7 above for the current design (`emeraldbride-oauth-callback`/`-verify`/`-logout`, `auth_lib.py`, `auth.js`)
+- Session is a signed JWT in an httpOnly cookie rather than an `Authorization: Bearer` header the client holds, so a page XSS can't exfiltrate it
+- Every protected endpoint calls `auth_lib.require_auth(event)` to validate the session before doing anything
 
 **5. Contact form submissions**
 - `POST /api/contact` receives form data, stores in database, sends confirmation email via SES
