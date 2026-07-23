@@ -7,31 +7,61 @@
   <title>Admin — Emerald Bride</title>
 
   <!-- Google Fonts -->
+  <!-- Brandbook specifies "La Mexicana" for headings; it is not published on Google Fonts
+       (confirmed: the API silently drops it and only serves the other requested families),
+       so Playfair Display is substituted, matching the same substitution already made in
+       index.html. Swap the @import and --font-heading value below if licensed La Mexicana
+       font files become available. -->
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;1,400&family=Lato:wght@300;400;700&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;1,400&family=Lora:ital,wght@0,400;0,500;1,600&display=swap" rel="stylesheet" />
 
   <style>
     /* ============================================================
        CSS CUSTOM PROPERTIES — BRAND TOKENS (mirrored from index.html)
     ============================================================ */
     :root {
-      --color-emerald:       #1B4332;
-      --color-emerald-light: #2D6A4F;
-      --color-emerald-faint: rgba(27, 67, 50, 0.06);
-      --color-gold:          #C9A84C;
-      --color-gold-light:    #D4B96A;
-      --color-ivory:         #FAF7F2;
-      --color-off-white:     #FEFEFE;
-      --color-taupe:         #8B7355;
-      --color-charcoal:      #2C2C2C;
-      --color-charcoal-light:#4A4A4A;
-      --color-border:        #E8E0D4;
-      --color-bg:            #F5F3EF;
-      --color-sidebar-bg:    #1B4332;
+      /* ---- Emerald Bride Brandbook palette (60-30-10) — same tokens as index.html ---- */
+      --color-primary-a: #B6C59A;   /* Sage Green       — 60%: dominant backgrounds/sections */
+      --color-primary-b: #898F75;   /* Deep Muted Green — secondary accent on primary */
+      --color-secondary: #E9ADB7;   /* Soft Pink        — 30%: contrast/accent */
+      --color-accent-b:  #E9DCD3;   /* Warm Beige       — 10%: understated accent */
+      --color-accent-a:  #FFFFFF;   /* White            — 10%: clean/premium */
 
-      --font-heading: 'Cormorant Garamond', Georgia, serif;
-      --font-body:    'Lato', system-ui, sans-serif;
+      /* ---- Legacy token names kept so existing rules below don't need renaming;
+         each resolves to its brandbook role, identical mapping to index.html. ---- */
+      --color-emerald:       var(--color-primary-b);
+      --color-emerald-light: var(--color-primary-a);
+      --color-emerald-faint: rgba(137, 143, 117, 0.08);
+      --color-gold:          var(--color-secondary);
+      --color-gold-light:    #F1C4CC; /* lighter pink tint, hover states only */
+      --color-ivory:         var(--color-accent-a);
+      --color-off-white:     var(--color-accent-a);
+
+      /* ---- Ink/neutral tones: the brandbook's 5 colors are all light/pastel and fail
+         4.5:1 text contrast on white, so small text uses a derived, legible ink instead
+         of the literal swatch (same fix as index.html's --color-taupe). Charcoal is the
+         dark-surface neutral used anywhere a pastel would otherwise sit under white text
+         (matches index.html's footer/.btn-primary treatment). ---- */
+      --color-taupe:          #5C6350;
+      --color-charcoal:       #2C2C2C;
+      --color-charcoal-light: #4A4A4A;
+
+      /* ---- Border roles: brandbook calls for a sage card border, a muted-green divider
+         at 20% opacity, and a solid muted-green input border — three distinct jobs, so
+         three tokens instead of one flat --color-border. ---- */
+      --color-border:       var(--color-primary-a);      /* card/component outer borders */
+      --color-divider:      rgba(137, 143, 117, 0.2);     /* section divider lines */
+      --color-input-border: var(--color-primary-b);       /* form input borders */
+      --color-input-bg:     rgba(233, 220, 211, 0.3);     /* beige-tinted input fill */
+      --color-nested-bg:    rgba(233, 220, 211, 0.28);    /* secondary surface inside a white card */
+
+      --color-bg:         #FAF8F5;
+      --color-sidebar-bg: var(--color-charcoal);
+
+      --font-heading:    'Playfair Display', Georgia, serif;
+      --font-subheading: 'Lora', Georgia, serif;
+      --font-body:       'Lora', Georgia, serif;
 
       --sidebar-width: 240px;
       --transition-base: 0.25s ease;
@@ -60,7 +90,7 @@
 
     h1, h2, h3 {
       font-family: var(--font-heading);
-      font-weight: 400;
+      font-weight: 700;
     }
 
     a { color: inherit; text-decoration: none; }
@@ -74,7 +104,7 @@
       position: fixed;
       inset: 0;
       z-index: 9999;
-      background: var(--color-emerald);
+      background: var(--color-charcoal);
       display: flex;
       align-items: center;
       justify-content: center;
@@ -128,34 +158,38 @@
       font-family: var(--font-body);
       font-size: 0.97rem;
       color: var(--color-charcoal);
-      background: var(--color-ivory);
-      border: 1px solid var(--color-border);
+      background: var(--color-input-bg);
+      border: 1px solid var(--color-input-border);
       border-radius: var(--radius-sm);
       padding: 12px 16px;
       outline: none;
-      transition: border-color var(--transition-base);
+      transition: border-color var(--transition-base), box-shadow var(--transition-base);
     }
 
-    .login-form input:focus { border-color: var(--color-emerald); }
+    .login-form input:focus {
+      border-color: var(--color-secondary);
+      box-shadow: 0 0 0 3px rgba(233, 173, 183, 0.3);
+    }
 
     .login-btn {
-      background: var(--color-emerald);
-      color: var(--color-ivory);
+      background: var(--color-charcoal);
+      color: var(--color-accent-a);
       padding: 13px 24px;
       border-radius: var(--radius-sm);
       font-size: 0.82rem;
       font-weight: 700;
       letter-spacing: 0.1em;
       text-transform: uppercase;
-      transition: background var(--transition-base);
+      transition: background var(--transition-base), color var(--transition-base);
       width: 100%;
     }
 
-    .login-btn:hover { background: var(--color-emerald-light); }
+    .login-btn:hover { background: var(--color-primary-a); color: var(--color-charcoal); }
 
     .login-error {
       font-size: 0.82rem;
-      color: #c0392b;
+      font-weight: 700;
+      color: var(--color-charcoal);
       text-align: center;
       min-height: 20px;
     }
@@ -202,7 +236,7 @@
       font-weight: 700;
       letter-spacing: 0.14em;
       text-transform: uppercase;
-      color: rgba(250, 247, 242, 0.4);
+      color: rgba(255, 255, 255, 0.45);
     }
 
     .sidebar-nav {
@@ -218,7 +252,7 @@
       font-size: 0.82rem;
       font-weight: 700;
       letter-spacing: 0.06em;
-      color: rgba(250, 247, 242, 0.65);
+      color: rgba(255, 255, 255, 0.65);
       cursor: pointer;
       transition: all var(--transition-base);
       border-left: 3px solid transparent;
@@ -255,8 +289,8 @@
       display: block;
       text-align: center;
       padding: 10px;
-      background: rgba(201, 168, 76, 0.15);
-      border: 1px solid rgba(201, 168, 76, 0.4);
+      background: rgba(233, 173, 183, 0.15);
+      border: 1px solid rgba(233, 173, 183, 0.4);
       border-radius: var(--radius-sm);
       font-size: 0.75rem;
       font-weight: 700;
@@ -267,7 +301,7 @@
     }
 
     .sidebar-view-btn:hover {
-      background: rgba(201, 168, 76, 0.25);
+      background: rgba(233, 173, 183, 0.25);
     }
 
     .sidebar-logout {
@@ -319,12 +353,14 @@
     }
 
     .card-title {
-      font-family: var(--font-heading);
-      font-size: 1.2rem;
-      color: var(--color-emerald);
+      font-family: var(--font-subheading);
+      font-style: italic;
+      font-weight: 600;
+      font-size: 1.3rem;
+      color: var(--color-taupe);
       margin-bottom: 20px;
       padding-bottom: 12px;
-      border-bottom: 1px solid var(--color-border);
+      border-bottom: 1px solid var(--color-divider);
     }
 
     /* ---- FORM ELEMENTS ---- */
@@ -350,23 +386,27 @@
       font-family: var(--font-body);
       font-size: 0.93rem;
       color: var(--color-charcoal);
-      background: var(--color-ivory);
-      border: 1px solid var(--color-border);
+      background: var(--color-input-bg);
+      border: 1px solid var(--color-input-border);
       border-radius: var(--radius-sm);
       padding: 10px 14px;
       outline: none;
       width: 100%;
-      transition: border-color var(--transition-base);
+      transition: border-color var(--transition-base), box-shadow var(--transition-base);
     }
 
     .field-input:focus,
     .field-textarea:focus {
-      border-color: var(--color-emerald);
-      box-shadow: 0 0 0 3px rgba(27, 67, 50, 0.07);
+      border-color: var(--color-secondary);
+      box-shadow: 0 0 0 3px rgba(233, 173, 183, 0.3);
     }
 
+    /* Focus rings use --color-emerald (deep muted green) rather than the pink
+       secondary — pink's contrast against light backgrounds is too low to meet
+       WCAG's 3:1 non-text contrast minimum for focus indicators (same reasoning
+       as index.html's focus-visible rules). */
     button:focus-visible {
-      outline: 2px solid var(--color-gold);
+      outline: 2px solid var(--color-emerald);
       outline-offset: 2px;
       border-radius: var(--radius-sm);
     }
@@ -395,7 +435,7 @@
       border-radius: var(--radius-sm);
       overflow: hidden;
       border: 1px solid var(--color-border);
-      background: linear-gradient(135deg, #1B4332, #2D6A4F);
+      background: linear-gradient(135deg, #898F75, #B6C59A);
     }
 
     .image-preview img {
@@ -405,25 +445,29 @@
       display: block;
     }
 
-    /* ---- BUTTONS ---- */
+    /* ---- BUTTONS ----
+       Solid charcoal + white reads reliably against every brandbook pastel — the
+       sage/pink fills themselves are too light to hold white text at 4.5:1, so they're
+       used as the hover fill (paired with charcoal text) instead, matching index.html's
+       .btn-primary treatment. */
     .btn-save {
-      background: var(--color-emerald);
-      color: var(--color-ivory);
+      background: var(--color-charcoal);
+      color: var(--color-accent-a);
       padding: 11px 28px;
       border-radius: var(--radius-sm);
       font-size: 0.8rem;
       font-weight: 700;
       letter-spacing: 0.1em;
       text-transform: uppercase;
-      transition: background var(--transition-base);
+      transition: background var(--transition-base), color var(--transition-base);
       margin-top: 20px;
     }
 
-    .btn-save:hover { background: var(--color-emerald-light); }
+    .btn-save:hover { background: var(--color-primary-a); color: var(--color-charcoal); }
 
     .btn-add {
       background: transparent;
-      color: var(--color-emerald);
+      color: var(--color-charcoal);
       border: 1px dashed var(--color-emerald);
       padding: 9px 20px;
       border-radius: var(--radius-sm);
@@ -436,11 +480,12 @@
 
     .btn-add:hover {
       background: var(--color-emerald-faint);
+      border-color: var(--color-primary-a);
     }
 
     .btn-delete {
       background: transparent;
-      color: #c0392b;
+      color: var(--color-charcoal-light);
       font-size: 0.75rem;
       font-weight: 700;
       letter-spacing: 0.06em;
@@ -450,15 +495,15 @@
       transition: all var(--transition-base);
     }
 
-    .btn-delete:hover { background: rgba(192, 57, 43, 0.07); }
+    .btn-delete:hover { background: rgba(233, 173, 183, 0.2); color: var(--color-charcoal); }
 
     /* ---- TOAST ---- */
     .toast {
       position: fixed;
       bottom: 32px;
       right: 32px;
-      background: var(--color-emerald);
-      color: var(--color-ivory);
+      background: var(--color-primary-a);
+      color: var(--color-charcoal);
       padding: 14px 24px;
       border-radius: var(--radius-sm);
       font-size: 0.85rem;
@@ -525,14 +570,14 @@
       font-weight: 700;
       letter-spacing: 0.08em;
       text-transform: uppercase;
-      color: var(--color-emerald);
+      color: var(--color-charcoal);
       transition: all var(--transition-base);
     }
 
     .dash-action-btn:hover {
-      background: var(--color-emerald);
-      color: var(--color-ivory);
-      border-color: var(--color-emerald);
+      background: var(--color-primary-a);
+      color: var(--color-charcoal);
+      border-color: var(--color-primary-a);
     }
 
     /* ---- GALLERY ADMIN ---- */
@@ -544,7 +589,7 @@
     }
 
     .gallery-admin-item {
-      background: var(--color-ivory);
+      background: var(--color-nested-bg);
       border: 1px solid var(--color-border);
       border-radius: var(--radius-sm);
       overflow: hidden;
@@ -557,7 +602,7 @@
     .gallery-admin-thumb {
       width: 100%;
       height: 140px;
-      background: linear-gradient(135deg, #1B4332, #2D6A4F);
+      background: linear-gradient(135deg, #898F75, #B6C59A);
       overflow: hidden;
       position: relative;
     }
@@ -606,8 +651,8 @@
     }
 
     .gallery-warning {
-      background: rgba(201, 168, 76, 0.12);
-      border: 1px solid rgba(201, 168, 76, 0.4);
+      background: rgba(233, 173, 183, 0.15);
+      border: 1px solid rgba(233, 173, 183, 0.45);
       border-radius: var(--radius-sm);
       padding: 12px 16px;
       font-size: 0.82rem;
@@ -626,7 +671,7 @@
     }
 
     .faq-admin-item {
-      background: var(--color-ivory);
+      background: var(--color-nested-bg);
       border: 1px solid var(--color-border);
       border-radius: var(--radius-sm);
       padding: 16px;
@@ -641,7 +686,7 @@
 
     .faq-drag-handle {
       flex-shrink: 0;
-      color: var(--color-border);
+      color: var(--color-emerald);
       margin-top: 6px;
       cursor: grab;
     }
@@ -663,7 +708,7 @@
     }
 
     .testimonial-admin-card {
-      background: var(--color-ivory);
+      background: var(--color-nested-bg);
       border: 1px solid var(--color-border);
       border-radius: var(--radius-sm);
       padding: 20px;
@@ -689,12 +734,12 @@
       overflow: hidden;
       transition: border-color var(--transition-base), background var(--transition-base);
       position: relative;
-      background: var(--color-ivory);
+      background: var(--color-nested-bg);
     }
 
     .drop-zone.dz-over {
       border-color: var(--color-emerald);
-      background: rgba(27, 67, 50, 0.04);
+      background: rgba(137, 143, 117, 0.08);
     }
 
     .dz-placeholder {
@@ -718,7 +763,7 @@
     }
 
     .dz-browse {
-      color: var(--color-emerald);
+      color: var(--color-taupe);
       font-weight: 700;
       text-decoration: underline;
       text-decoration-color: transparent;
@@ -733,9 +778,9 @@
       font-weight: 700;
       letter-spacing: 0.09em;
       text-transform: uppercase;
-      color: var(--color-gold);
-      background: rgba(201, 168, 76, 0.1);
-      border: 1px solid rgba(201, 168, 76, 0.25);
+      color: var(--color-charcoal-light);
+      background: rgba(182, 197, 154, 0.22);
+      border: 1px solid rgba(182, 197, 154, 0.45);
       padding: 4px 14px;
       border-radius: 20px;
       white-space: nowrap;
@@ -774,7 +819,7 @@
       font-weight: 700;
       letter-spacing: 0.06em;
       text-transform: uppercase;
-      color: #c0392b;
+      color: var(--color-charcoal);
       padding: 4px 10px;
       border-radius: var(--radius-sm);
       transition: background var(--transition-base);
@@ -784,14 +829,14 @@
       flex-shrink: 0;
     }
 
-    .dz-clear:hover { background: rgba(192, 57, 43, 0.07); }
+    .dz-clear:hover { background: rgba(233, 173, 183, 0.2); }
 
     .dz-size-warning {
       font-size: 0.78rem;
-      color: #7a5800;
-      background: rgba(201, 168, 76, 0.1);
+      color: var(--color-taupe);
+      background: rgba(233, 173, 183, 0.15);
       padding: 8px 12px;
-      border-top: 1px solid rgba(201, 168, 76, 0.3);
+      border-top: 1px solid rgba(233, 173, 183, 0.35);
     }
 
     .dz-url-fallback {
@@ -857,7 +902,7 @@
     .gallery-change-overlay {
       position: absolute;
       inset: 0;
-      background: rgba(27, 67, 50, 0.6);
+      background: rgba(44, 44, 44, 0.55);
       display: flex;
       align-items: center;
       justify-content: center;
@@ -1078,8 +1123,8 @@
             </div>
             <p class="field-hint" style="margin-top:6px;">
               ℹ After AWS setup, your images folder is at:
-              <code style="font-size:0.8rem; background:var(--color-ivory); padding:2px 6px; border-radius:3px;">https://emeraldbride.com/images/your-photo.jpg</code>
-              — upload your photo to S3 in the <code style="font-size:0.8rem; background:var(--color-ivory); padding:2px 6px; border-radius:3px;">images/</code> folder, then paste that URL here.
+              <code style="font-size:0.8rem; background:var(--color-nested-bg); padding:2px 6px; border-radius:3px;">https://emeraldbride.com/images/your-photo.jpg</code>
+              — upload your photo to S3 in the <code style="font-size:0.8rem; background:var(--color-nested-bg); padding:2px 6px; border-radius:3px;">images/</code> folder, then paste that URL here.
             </p>
           </div>
 
@@ -1087,7 +1132,7 @@
           <div style="margin-top:16px; display:flex; align-items:center; gap:12px;">
             <label class="field-label" style="margin:0;">Hero Image Visibility</label>
             <button type="button" id="hero-visibility-btn" class="btn-save"
-              style="background:var(--color-emerald); min-width:100px;">Visible</button>
+              style="background:var(--color-charcoal); min-width:100px;">Visible</button>
             <span id="hero-visibility-label" style="font-size:0.78rem; color:var(--color-taupe);">
               Image is showing on the live site
             </span>
@@ -1182,8 +1227,8 @@
               <input class="field-input" type="url" id="a-image-url" placeholder="https://your-cdn.com/portrait.jpg" />
             </div>
             <p class="field-hint" style="margin-top:6px;">
-              ℹ Upload your photo to S3 in the <code style="font-size:0.8rem; background:var(--color-ivory); padding:2px 6px; border-radius:3px;">images/</code> folder, then paste the URL:
-              <code style="font-size:0.8rem; background:var(--color-ivory); padding:2px 6px; border-radius:3px;">https://emeraldbride.com/images/artist.jpg</code>
+              ℹ Upload your photo to S3 in the <code style="font-size:0.8rem; background:var(--color-nested-bg); padding:2px 6px; border-radius:3px;">images/</code> folder, then paste the URL:
+              <code style="font-size:0.8rem; background:var(--color-nested-bg); padding:2px 6px; border-radius:3px;">https://emeraldbride.com/images/artist.jpg</code>
             </p>
           </div>
           <button class="btn-save" data-save="about">Save About</button>
@@ -1219,7 +1264,7 @@
         <div class="card" style="margin-bottom:20px;">
           <button type="button" id="s3-library-toggle" style="
             background:none; border:1px solid var(--color-border);
-            color:var(--color-emerald); font-family:inherit; font-size:0.85rem;
+            color:var(--color-taupe); font-family:inherit; font-size:0.85rem;
             font-weight:600; cursor:pointer; padding:8px 16px; border-radius:4px;
             width:100%; text-align:left; letter-spacing:0.02em;">
             ▶ S3 Photo Library (click to load)
@@ -1595,7 +1640,7 @@
             if (warn) {
               const savedPct = ((1 - optimizedSize / originalSize) * 100).toFixed(0);
               warn.textContent   = `✓ Optimized: ${width}×${height}px · ${(optimizedSize / 1024).toFixed(0)}KB · ${savedPct}% smaller`;
-              warn.style.color   = 'var(--color-emerald)';
+              warn.style.color   = 'var(--color-taupe)';
               warn.style.display = 'block';
               setTimeout(() => { warn.style.display = 'none'; }, 3000);
             }
@@ -1603,7 +1648,7 @@
             if (warn) {
               warn.style.display   = 'block';
               warn.textContent     = '⚠ Upload failed — try again or paste a hosted URL below';
-              warn.style.color     = '#c0392b';
+              warn.style.color     = 'var(--color-charcoal)';
               warn.style.fontStyle = 'italic';
             }
           }
@@ -1612,7 +1657,7 @@
           if (warn) {
             warn.style.display = 'block';
             warn.textContent = '⚠ Preview only — this file is not saved. To publish: upload this image to your S3 images/ folder (or any CDN), then paste the URL in the "Or paste a hosted URL" field below.';
-            warn.style.color = '#7a5800';
+            warn.style.color = 'var(--color-taupe)';
             warn.style.fontStyle = 'italic';
           }
         }
@@ -1706,11 +1751,11 @@
       if (!btn || !label) return;
       if (heroHidden) {
         btn.textContent         = 'Hidden';
-        btn.style.background    = '#888';
+        btn.style.background    = 'var(--color-charcoal-light)';
         label.textContent       = 'Image is hidden on the live site';
       } else {
         btn.textContent         = 'Visible';
-        btn.style.background    = 'var(--color-emerald)';
+        btn.style.background    = 'var(--color-charcoal)';
         label.textContent       = 'Image is showing on the live site';
       }
     }
@@ -2032,7 +2077,7 @@
             if (warn) {
               const savedPct = ((1 - optimizedSize / originalSize) * 100).toFixed(0);
               warn.textContent  = `✓ Optimized: ${width}×${height}px · ${(optimizedSize / 1024).toFixed(0)}KB · ${savedPct}% smaller`;
-              warn.style.color  = 'var(--color-emerald)';
+              warn.style.color  = 'var(--color-taupe)';
               warn.style.display = 'block';
               setTimeout(() => { warn.style.display = 'none'; }, 3000);
             }
@@ -2441,7 +2486,7 @@
         const isHidden  = hiddenUrls.has(photo.url);
 
         const card = document.createElement('div');
-        card.style.cssText = 'width:160px;flex-shrink:0;border:1px solid #e0d8d0;border-radius:6px;overflow:hidden;background:#fff;display:flex;flex-direction:column;';
+        card.style.cssText = 'width:160px;flex-shrink:0;border:1px solid #E9DCD3;border-radius:6px;overflow:hidden;background:#fff;display:flex;flex-direction:column;';
 
         const img = document.createElement('img');
         img.src   = photo.url;
@@ -2453,18 +2498,18 @@
 
         const name = document.createElement('div');
         name.textContent = photo.filename;
-        name.style.cssText = 'font-size:0.72rem;color:#333;word-break:break-all;line-height:1.3;';
+        name.style.cssText = 'font-size:0.72rem;color:var(--color-charcoal);word-break:break-all;line-height:1.3;';
 
         const badge = document.createElement('span');
         if (!inGallery) {
           badge.textContent  = 'Not in gallery';
-          badge.style.cssText = 'font-size:0.68rem;background:#f0ece8;color:#888;border-radius:3px;padding:1px 5px;align-self:flex-start;';
+          badge.style.cssText = 'font-size:0.68rem;background:rgba(233,220,211,0.5);color:var(--color-charcoal-light);border-radius:3px;padding:1px 5px;align-self:flex-start;';
         } else if (isHidden) {
           badge.textContent  = 'Hidden';
-          badge.style.cssText = 'font-size:0.68rem;background:#fdecea;color:#c0392b;border-radius:3px;padding:1px 5px;align-self:flex-start;';
+          badge.style.cssText = 'font-size:0.68rem;background:rgba(233,173,183,0.3);color:var(--color-charcoal);border-radius:3px;padding:1px 5px;align-self:flex-start;';
         } else {
           badge.textContent  = 'Visible';
-          badge.style.cssText = 'font-size:0.68rem;background:#e8f5e9;color:#2e7d32;border-radius:3px;padding:1px 5px;align-self:flex-start;';
+          badge.style.cssText = 'font-size:0.68rem;background:rgba(182,197,154,0.35);color:var(--color-charcoal);border-radius:3px;padding:1px 5px;align-self:flex-start;';
         }
 
         const actions = document.createElement('div');
@@ -2474,7 +2519,7 @@
           const addBtn = document.createElement('button');
           addBtn.type        = 'button';
           addBtn.textContent = '+ Add to Gallery';
-          addBtn.style.cssText = 'flex:1;font-size:0.72rem;padding:3px 0;border:none;border-radius:3px;background:var(--color-emerald);color:#fff;cursor:pointer;';
+          addBtn.style.cssText = 'flex:1;font-size:0.72rem;padding:3px 0;border:none;border-radius:3px;background:var(--color-charcoal);color:#fff;cursor:pointer;';
           addBtn.addEventListener('click', () => {
             const items = collectGalleryState();
             items.push({ url: photo.url, caption: 'Bridal glam', alt: 'Bridal makeup by Emerald Bride', focalPoint: '50% 50%', hidden: false });
@@ -2487,7 +2532,7 @@
           const toggleBtn = document.createElement('button');
           toggleBtn.type        = 'button';
           toggleBtn.textContent = isHidden ? 'Show' : 'Hide';
-          toggleBtn.style.cssText = `flex:1;font-size:0.72rem;padding:3px 0;border:none;border-radius:3px;background:${isHidden ? 'var(--color-emerald)' : '#888'};color:#fff;cursor:pointer;`;
+          toggleBtn.style.cssText = `flex:1;font-size:0.72rem;padding:3px 0;border:none;border-radius:3px;background:${isHidden ? 'var(--color-charcoal)' : 'var(--color-charcoal-light)'};color:#fff;cursor:pointer;`;
           toggleBtn.addEventListener('click', () => {
             const items = collectGalleryState();
             const match = items.find(it => it.url === photo.url);
